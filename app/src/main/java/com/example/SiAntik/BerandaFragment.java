@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -77,10 +78,16 @@ public class BerandaFragment extends Fragment {
         setUpPieChart(pieChart);
         BarChart barChart = view.findViewById(R.id.barChart);
         setUpBarChart(barChart);
-        XAxis xAxis = barChart.getXAxis();
         BarChart barChart1 = view.findViewById(R.id.barChart1);
         setUpBarChart(barChart1);
 
+        TextView nama = (TextView) view.findViewById(R.id.txt_nama);
+
+        Bundle extras = getActivity().getIntent().getExtras();
+        if (extras != null) {
+            String nama1 = extras.getString("NAMA");
+            nama.setText(nama1);
+        }
         return view;
     }
     private void setUpPieChart(PieChart pieChart){

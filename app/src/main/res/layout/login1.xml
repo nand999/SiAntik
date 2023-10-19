@@ -31,13 +31,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/EditTextNIK"
+                <EditText
+                    android:id="@+id/EditTextUsername"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:layout_gravity="center"
-                    android:hint="NIK" />
+                    android:hint="Nama Lengkap" />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:layout_gravity="center"
-                    android:hint="Password" />
+                    android:hint="Kata Sandi" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

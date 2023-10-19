@@ -11,9 +11,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <TextView
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="login sebagai:"
+            android:textSize="15dp"/>
+        <TextView
+            android:id="@+id/txt_nama"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textAlignment="center"/>
 
     <!-- TODO: Update blank fragment layout -->
     <com.github.mikephil.charting.charts.PieChart
+        android:layout_marginTop="80dp"
         android:id="@+id/pieChart"
         android:layout_width="match_parent"
         android:layout_height="300dp"/>

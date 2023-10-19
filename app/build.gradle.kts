@@ -45,8 +45,12 @@ dependencies {
     implementation("com.google.android.material:material:1.2.0")
     implementation("com.google.android.material:material:1.4.0")
     //nav bar
-  //  implementation("com.google.android.material:material:1.11.0-alpha03")
+    //implementation("com.google.android.material:material:1.11.0-alpha03")
     //chart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    //retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.6.0")
 }
 

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ProfilFragment"
+    android:orientation="vertical">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/ijo"
+        android:layout_gravity="center"
+        app:cardCornerRadius="20dp">
+        <LinearLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <androidx.cardview.widget.CardView
+                android:layout_marginTop="30dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:cardCornerRadius="10dp">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:src="@drawable/gering"/>
+
+            </androidx.cardview.widget.CardView>
+            <EditText
+                android:layout_marginTop="20dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="TXT NIK"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAlignment="viewStart"/>
+            <EditText
+                android:layout_marginTop="20dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="TXT NAMA"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAlignment="viewStart"/>
+            <EditText
+                android:layout_marginTop="20dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="TXT DESA"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAlignment="viewStart"/>
+            <EditText
+                android:layout_marginTop="20dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="TXT RT/RW"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAlignment="viewStart"/>
+            <Button
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Simpan"
+                android:textColor="@color/black"
+                android:backgroundTint="@color/white"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

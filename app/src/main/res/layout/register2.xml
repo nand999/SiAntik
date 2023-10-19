@@ -19,7 +19,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="350dp"
-        android:layout_height="420dp"
+        android:layout_height="380dp"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:backgroundTint="@color/ijo"
@@ -79,7 +79,7 @@
                         android:id="@+id/EditTextTelp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Nomor Telepon"/>
+                        android:hint="RT/RW"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -97,7 +97,7 @@
                         android:id="@+id/EditTextRT"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="RT/RW"/>
+                        android:hint="Kata Sandi"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -115,25 +115,7 @@
                         android:id="@+id/EditTextDesa"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Desa"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:layout_marginTop="20dp"
-                android:layout_width="300dp"
-                android:layout_gravity="center"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                android:backgroundTint="@color/white">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <EditText
-                        android:id="@+id/EditTextPass"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Kata Sandi"/>
+                        android:hint="Konfirmasi Kata Sandi"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
