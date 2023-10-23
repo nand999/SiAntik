@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <EditText
-                        android:id="@+id/EditTextNIK"
+                        android:id="@+id/EditTextNIKLupa"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="NIK"/>
@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <EditText
-                        android:id="@+id/EditTextNama"
+                        android:id="@+id/EditTextNamaLupa"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Nama Lengkap"/>
@@ -115,6 +115,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <Button
+                android:id="@+id/btnSimpan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

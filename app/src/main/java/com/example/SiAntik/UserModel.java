@@ -9,7 +9,7 @@ public class UserModel {
 
     @Expose
     @SerializedName("nik_user")
-    private String idakun;
+    private String nik_user;
     @Expose
     @SerializedName("nama_user")
     private String nama_user;
@@ -18,7 +18,7 @@ public class UserModel {
     private String rt_rw;
     @Expose
     @SerializedName("password_user")
-    private String Password;
+    private String password_user;
 //    @Expose
 //    @SerializedName("alamat_user")
 //    private String Alamat_user;
@@ -32,21 +32,21 @@ public class UserModel {
     public UserModel(String idakun, String nama, String rt_rw, String pass
 //                     String alamatuser, String notelpuser, String userfoto
     ) {
-        this.idakun = idakun;
+        this.nik_user = idakun;
         this.nama_user = nama;
-        this.Password = pass;
+        this.password_user = pass;
         this.rt_rw = rt_rw;
 //        this.Alamat_user = alamatuser;
 //        this.notelp_user = notelpuser;
 //        this.userfoto = userfoto;
     }
 
-    public String getIdakun() {
-        return idakun;
+    public String getNik_user() {
+        return nik_user;
     }
 
-    public void setIdakun(String idakun) {
-        this.idakun = idakun;
+    public void setNik_user(String idakun) {
+        this.nik_user = idakun;
     }
 
     public String getRt_rw() {
@@ -57,12 +57,12 @@ public class UserModel {
         this.rt_rw = alamat_user;
     }
 
-    public String getEmail() {
-        return Password;
+    public String getPassword_user() {
+        return password_user;
     }
 
-    public void setEmail(String email) {
-        this.Password = email;
+    public void setPassword_userl(String email) {
+        this.password_user = email;
     }
 
     public String getNama_user() {

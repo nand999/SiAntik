@@ -12,4 +12,21 @@ public interface RetrofitEndPoint {
             @Field("nama_user") String email,
             @Field("password_user") String password
     );
+
+    @FormUrlEncoded
+    @POST("registerMobile.php") // Sesuaikan URL endpoint sesuai kebutuhan
+    Call<UserResponse> register(
+            @Field("nik_user") String nik_user,
+            @Field("nama_user") String nama_user,
+            @Field("rt_rw") String rt_rw,
+            @Field("password_user") String password_user
+    );
+
+    @FormUrlEncoded
+    @POST("lupaSandiUser.php")
+    Call<PasswordResetResponse> resetPassword(
+            @Field("nik_user") String nikUser,
+            @Field("nama_user") String namaUser,
+            @Field("new_password") String newPassword
+    );
 }

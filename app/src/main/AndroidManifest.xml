@@ -36,7 +36,12 @@
 
         </activity>
         <activity
+            android:exported="true"
             android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="com.example.SiAntik.LOGIN_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".LupaActivity">

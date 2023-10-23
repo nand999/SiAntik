@@ -12,17 +12,35 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@+id/bottomNavigationView"
+        android:layout_above="@+id/chipNav"
         android:layout_alignParentTop="true"
         android:layout_weight="1" />
 
-    <!-- Bottom Navigation View -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
+<!--    &lt;!&ndash; Bottom Navigation View &ndash;&gt;-->
+<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--        android:id="@+id/bottomNavigationView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        app:menu="@menu/navigation"-->
+<!--        android:background="@color/ijo"/>-->
+
+    <com.ismaeldivita.chipnavigation.ChipNavigationBar
+        android:id="@+id/chipNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cnb_menuResource="@menu/chip_menu"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/navigation"
-        android:background="@color/ijo"/>
+        android:background="@drawable/round_corners"
+        app:cnb_unselectedColor="@android:color/black"
+        app:cnb_radius="4dp"
+        app:cnb_iconSize="20dp"
+        app:cnb_orientationMode="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:elevation="8dp"
+        android:backgroundTint="@color/light_blue_500"/>
 
 </RelativeLayout>

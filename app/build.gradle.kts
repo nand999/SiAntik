@@ -52,5 +52,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.6.0")
+    //chip nav bar
+    implementation ("com.ismaeldivita.chipnavigation:chip-navigation-bar:1.3.2")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.31")
 }
 
