@@ -28,34 +28,11 @@ public class MainActivity extends AppCompatActivity {
         if (extras != null) {
             nama = extras.getString("NAMA");
         }
+        bottomMenu();
 
-//        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-//                Fragment selectedFragment = null;
-//
-//                switch (menuItem.getItemId()) {
-//                    case R.id.beranda:
-//                        selectedFragment = new BerandaFragment();
-//                        break;
-//                    case R.id.lapor:
-//                        selectedFragment = new LaporFragment();
-//                        break;
-//                    case R.id.profil:
-//                        selectedFragment = new ProfilFragment();
-//                        break;
-//                }
-//
-//                if (selectedFragment != null) {
-//                    getSupportFragmentManager().beginTransaction()
-//                            .replace(R.id.fragment_container, selectedFragment)
-//                            .commit();
-//                }
-//
-//                return true;
-//            }
-//        });
+    }
 
+    private void bottomMenu(){
         chipNavigationBar.setOnItemSelectedListener
                 (new ChipNavigationBar.OnItemSelectedListener() {
                     @Override
@@ -86,3 +63,33 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 }
+
+
+//bottomnav lama
+
+//        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+//                Fragment selectedFragment = null;
+//
+//                switch (menuItem.getItemId()) {
+//                    case R.id.beranda:
+//                        selectedFragment = new BerandaFragment();
+//                        break;
+//                    case R.id.lapor:
+//                        selectedFragment = new LaporFragment();
+//                        break;
+//                    case R.id.profil:
+//                        selectedFragment = new ProfilFragment();
+//                        break;
+//                }
+//
+//                if (selectedFragment != null) {
+//                    getSupportFragmentManager().beginTransaction()
+//                            .replace(R.id.fragment_container, selectedFragment)
+//                            .commit();
+//                }
+//
+//                return true;
+//            }
+//        });

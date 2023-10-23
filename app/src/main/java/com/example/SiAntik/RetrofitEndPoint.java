@@ -1,8 +1,11 @@
 package com.example.SiAntik;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface RetrofitEndPoint {
@@ -14,7 +17,7 @@ public interface RetrofitEndPoint {
     );
 
     @FormUrlEncoded
-    @POST("registerMobile.php") // Sesuaikan URL endpoint sesuai kebutuhan
+    @POST("registerMobile.php")
     Call<UserResponse> register(
             @Field("nik_user") String nik_user,
             @Field("nama_user") String nama_user,
@@ -29,4 +32,7 @@ public interface RetrofitEndPoint {
             @Field("nama_user") String namaUser,
             @Field("new_password") String newPassword
     );
+
+    @GET("getDataLaporan.php")
+    Call<List<getLaporanResponse>> getDataLaporan();
 }
