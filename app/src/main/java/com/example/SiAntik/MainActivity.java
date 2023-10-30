@@ -1,19 +1,27 @@
 package com.example.SiAntik;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 import androidx.annotation.NonNull;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
-    private String nama;
+    private String nama,nik;
     private String KEY_NAMA = "NAMA";
     ChipNavigationBar chipNavigationBar;
 
@@ -24,11 +32,44 @@ public class MainActivity extends AppCompatActivity {
 //        bottomNavigationView = findViewById(R.id.bottomNavigationView);
         chipNavigationBar = findViewById(R.id.chipNav);
 
+//        Window window = MainActivity.getWindow();
+//// clear FLAG_TRANSLUCENT_STATUS flag:
+//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//// finally change the color
+//        window.setStatusBarColor(ContextCompat.getColor(MainActivity.this,R.color.ijo));
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             nama = extras.getString("NAMA");
+            nik = extras.getString("NIK");
         }
-        bottomMenu();
+       bottomMenu();
+
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String nik = sharedPreferences.getString("NIK", null);
+
+        if (nik != null) {
+            String nama = sharedPreferences.getString("NAMA", "");
+            String rt = sharedPreferences.getString("RT", "");
+            String noRumah = sharedPreferences.getString("NO_RUMAH", "");
+
+            // Lakukan sesuatu dengan data pengguna (misalnya, tampilkan fragment utama atau yang sesuai)
+//            Toast.makeText(getApplicationContext(), "nik: " + nik + " " + " no: " + noRumah, Toast.LENGTH_SHORT).show();
+            bottomMenu();
+        } else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+
+
+
+
 
     }
 
@@ -61,6 +102,12 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new BerandaFragment())
                 .commit();
+    }
+    public void updateNamaBeranda(String namaBaru) {
+        BerandaFragment berandaFragment = (BerandaFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (berandaFragment != null) {
+            berandaFragment.updateNama(namaBaru);
+        }
     }
 }
 

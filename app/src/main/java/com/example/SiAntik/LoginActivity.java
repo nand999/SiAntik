@@ -2,16 +2,19 @@ package com.example.SiAntik;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.*;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
-
 import com.example.SiAntik.cadangan.ApiClient;
 import com.example.SiAntik.cadangan.ApiService;
-
+import com.example.SiAntik.cadangan.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,22 +24,34 @@ public class LoginActivity extends AppCompatActivity {
     Button ButtonReg;
     Button ButtonLupa;
     Button ButtonLogin;
+    ImageButton btnEye;
     private EditText etNikUser, etPassword;
     private ApiService apiService;
     private String KEY_NAMA = "NAMA";
+    private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login1);
-        ButtonReg = (Button) findViewById(R.id.ButtonRegister);
-        ButtonLupa = (Button) findViewById(R.id.ButtonLupa);
-        ButtonLogin = (Button) findViewById(R.id.ButtonLogin);
-//        etNikUser = (EditText) findViewById(R.id.EditTextUsername);
-        etPassword = (EditText) findViewById(R.id.EditTextPass);
-        username = (EditText) findViewById(R.id.EditTextUsername);
+        ButtonReg = findViewById(R.id.ButtonRegister);
+        ButtonLupa = findViewById(R.id.ButtonLupa);
+        ButtonLogin = findViewById(R.id.ButtonLogin);
+        btnEye = findViewById(R.id.btn_eye);
+        etPassword = findViewById(R.id.EditTextPass);
+        username = findViewById(R.id.EditTextUsername);
         apiService = ApiClient.getClient().create(ApiService.class);
 
+        // Mendapatkan SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
+        // Mengecek apakah ada username yang disimpan
+        String lastUsername = sharedPreferences.getString("LAST_USERNAME", "");
+
+        // Mengisi kembali EditText jika ada username yang disimpan
+        if (!lastUsername.isEmpty()) {
+            username.setText(lastUsername);
+        }
 
         ButtonReg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,45 +72,78 @@ public class LoginActivity extends AppCompatActivity {
         ButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                String nama = username.getText().toString();
-//                Intent intentLogin = new Intent(getApplicationContext(), MainActivity.class);
-//                intentLogin.putExtra("NAMA", nama);
-//                startActivity(intentLogin);
-//                loginUser();
                 loginUser1();
             }
         });
 
+        btnEye.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isPasswordVisible) {
+                    // Jika password sedang terlihat, sembunyikan teks
+                    etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    isPasswordVisible = false;
+                } else {
+                    // Jika password sedang tersembunyi, tampilkan teks
+                    etPassword.setTransformationMethod(null);
+                    isPasswordVisible = true;
+                }
+            }
+        });
     }
 
     private void loginUser1() {
+        RetrofitEndPoint retrofitEndPoint = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
 
-//        Toast.makeText(this, username.getText().toString() + " // " + etPassword.getText().toString(), Toast.LENGTH_SHORT).show();
+        Call<UserResponse> call = retrofitEndPoint.login(username.getText().toString(), etPassword.getText().toString());
+        call.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                    // Login berhasil
+                    UserModel userModel = response.body().getData();
+                    if (userModel != null) {
+                        String nama = userModel.getNama_user();
+                        String nik = userModel.getNik_user();
+                        String rt = userModel.getRt_rw();
+                        String no = userModel.getNo_rumah();
 
-        RetrofitClient.getConnection().create(RetrofitEndPoint.class)
-                .login(username.getText().toString(), etPassword.getText().toString())
-                .enqueue(new Callback<UserResponse>() {
-                    @Override
-                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                        if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
-                            // Membuat Intent untuk membuka aktivitas berikutnya
-                            String nama = username.getText().toString();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("NAMA", nama);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                        // Simpan data pengguna di SharedPreferences
+                        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("NIK", nik);
+                        editor.putString("NAMA", nama);
+                        editor.putString("RT", rt);
+                        editor.putString("NO_RUMAH", no);
+
+                        // Simpan juga username yang dimasukkan pengguna
+                        editor.putString("LAST_USERNAME", username.getText().toString());
+                        editor.apply();
+
+                        // Sekarang, Anda dapat menggunakannya sesuai kebutuhan
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("NAMA", nama);
+                        intent.putExtra("NIK", nik);
+                        intent.putExtra("RT", rt);
+                        intent.putExtra("NO_RUMAH", no);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Gagal mengambil data pengguna", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<UserResponse> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
+
 
 
     // LOGIN RETROFIT LAMA

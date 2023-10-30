@@ -1,12 +1,14 @@
 package com.example.SiAntik;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -43,6 +45,22 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+
 public class LaporFragment extends Fragment {
 
     private static final int REQUEST_CAMERA = 1;
@@ -54,8 +72,27 @@ public class LaporFragment extends Fragment {
     private ImageView imageView;
     private Button btnSend,btnClear;
     private EditText edtDes;
+    Bitmap FixBitmap;
+    String ImageTag = "image_tag";
+    String ImageName = "image_data";
+    String Deskripsi = "deskripsi";
+    ProgressDialog progressDialog;
+    ByteArrayOutputStream byteArrayOutputStream;
+    byte[] byteArray;
+    String ConvertImage;
+    String GetImageNameFromEditText;
+    HttpURLConnection httpURLConnection;
+    URL url;
+    OutputStream outputStream;
+    BufferedWriter bufferedWriter;
+    int RC;
+    BufferedReader bufferedReader;
+    StringBuilder stringBuilder;
+    boolean check = true;
+    private int GALLERY = 1, CAMERA = 2;
 
     private ApiService apiService;
+
 
     public LaporFragment() {
         // Required empty public constructor
@@ -75,21 +112,17 @@ public class LaporFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_lapor, container, false);
 
+        Bundle extras = getActivity().getIntent().getExtras();
+        if (extras != null) {
+            String nik = extras.getString("NIK");
+        }
+
         btnSelectImage = rootView.findViewById(R.id.btn_pilGam);
         imageView = rootView.findViewById(R.id.imageView);
         btnSend = rootView.findViewById(R.id.btn_kirim);
         btnClear = rootView.findViewById(R.id.btn_clear);
         edtDes = rootView.findViewById(R.id.edtDes);
 
-
-        Gson gson = new GsonBuilder().setLenient().create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://your-api-base-url/") // Ganti dengan URL API Anda
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        apiService = retrofit.create(ApiService.class);
 
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,170 +133,167 @@ public class LaporFragment extends Fragment {
 
         btnSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                selectImage();
+            public void onClick(View view) {
+                showPictureDialog();
             }
         });
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                new SendImageToServer().execute();
+            public void onClick(View view) {
+                GetImageNameFromEditText = edtDes.getText().toString();
+                UploadImageToServer();
             }
         });
-
-        // Mengecek dan meminta izin
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_EXTERNAL_STORAGE_PERMISSION);
-        }
 
         return rootView;
     }
-
-    private void selectImage() {
-        final CharSequence[] items = {"Ambil Foto", "Pilih dari Galeri", "Batal"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-        builder.setTitle("Tambahkan Foto");
-        builder.setItems(items, (dialog, item) -> {
-            if (items[item].equals("Ambil Foto")) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, REQUEST_CAMERA);
-            } else if (items[item].equals("Pilih dari Galeri")) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(intent, "Pilih File"), SELECT_FILE);
-            } else if (items[item].equals("Batal")) {
-                dialog.dismiss();
+    private void showPictureDialog() {
+        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getContext());
+        pictureDialog.setTitle("Select Action");
+        String[] pictureDialogItems = {
+                "Photo Gallery",
+                "Camera"
+        };
+        pictureDialog.setItems(pictureDialogItems, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        choosePhotoFromGallery();
+                        break;
+                    case 1:
+                        takePhotoFromCamera();
+                        break;
+                }
             }
         });
-        builder.show();
+        pictureDialog.show();
+    }
+
+    public void choosePhotoFromGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, GALLERY);
+    }
+
+    private void takePhotoFromCamera() {
+        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, CAMERA);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CAMERA) {
-                // Gambar diambil dari kamera
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                imageView.setImageBitmap(photo);
-
-                // Tampilkan pesan untuk memastikan bahwa gambar telah diambil
-                Toast.makeText(requireActivity(), "Gambar dari kamera diambil", Toast.LENGTH_SHORT).show();
-            } else if (requestCode == SELECT_FILE) {
-                // Gambar dipilih dari galeri
-                Uri selectedImageUri = data.getData();
-                String imagePath = getPathFromUri(selectedImageUri);
-                if (imagePath != null) {
-                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                    imageView.setImageBitmap(bitmap);
-                } else {
-                    Toast.makeText(requireActivity(), "Gagal mendapatkan path file gambar", Toast.LENGTH_SHORT).show();
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == GALLERY) {
+            if (data != null) {
+                Uri contentURI = data.getData();
+                try {
+                    FixBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), contentURI);
+                    imageView.setImageBitmap(FixBitmap);
+                    btnSend.setVisibility(View.VISIBLE);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Failed!", Toast.LENGTH_SHORT).show();
                 }
             }
+        } else if (requestCode == CAMERA) {
+            FixBitmap = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(FixBitmap);
+            btnSend.setVisibility(View.VISIBLE);
         }
     }
 
+    public void UploadImageToServer() {
+        FixBitmap.compress(Bitmap.CompressFormat.JPEG, 40, byteArrayOutputStream);
+        byteArray = byteArrayOutputStream.toByteArray();
+        ConvertImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
-    private String getPathFromUri(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = requireActivity().getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String filePath = cursor.getString(columnIndex);
-            cursor.close();
-            return filePath;
-        }
-        return null;
-    }
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_CAMERA_PERMISSION || requestCode == REQUEST_READ_EXTERNAL_STORAGE_PERMISSION) {
-            // Proses hasil izin di sini
-
-            // Cek apakah izin diberikan atau tidak
-            boolean izinDiberikan = true;
-            for (int grantResult : grantResults) {
-                if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                    izinDiberikan = false;
-                    break;
-                }
+        class AsyncTaskUploadClass extends AsyncTask<Void, Void, String> {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = ProgressDialog.show(getContext(), "Image is Uploading", "Please Wait", false, false);
             }
 
-            if (izinDiberikan) {
-                // Izin diberikan, lanjutkan dengan tindakan selanjutnya
-                selectImage();
-            } else {
-                // Izin tidak diberikan, berikan pemberitahuan kepada pengguna
-                Toast.makeText(requireActivity(), "Izin diperlukan untuk memilih gambar", Toast.LENGTH_SHORT).show();
+            @Override
+            protected void onPostExecute(String string1) {
+                super.onPostExecute(string1);
+                progressDialog.dismiss();
+                Toast.makeText(getContext(), string1, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                ImageProcessClass imageProcessClass = new ImageProcessClass();
+                HashMap<String, String> HashMapParams = new HashMap<String, String>();
+                SharedPreferences sharedPref = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                String nik_user = sharedPref.getString("NIK", ""); // Mendapatkan nik_user dari SharedPreferences
+
+                HashMapParams.put(ImageTag, GetImageNameFromEditText);
+                HashMapParams.put(ImageName, ConvertImage);
+                HashMapParams.put(Deskripsi, GetImageNameFromEditText);
+                HashMapParams.put("nik_user", nik_user);
+
+                String FinalData = imageProcessClass.ImageHttpRequest("http://172.16.106.11:8080/test_siantik/mobile/upGambar.php", HashMapParams);
+
+                return FinalData;
             }
         }
+        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+        AsyncTaskUploadClassOBJ.execute();
     }
 
-
-    private class SendImageToServer extends AsyncTask<Void, Void, Boolean> {
-        @Override
-        protected Boolean doInBackground(Void... params) {
+    public class ImageProcessClass {
+        public String ImageHttpRequest(String requestURL, HashMap<String, String> PData) {
+            StringBuilder stringBuilder = new StringBuilder();
             try {
-                // Mengambil gambar dari ImageView
-                BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
-                Bitmap bitmap = drawable.getBitmap();
-
-                // Kompresi gambar jika ukurannya lebih besar dari 64 KB
-                int maxSizeKB = 64;
-                int maxSizeBytes = maxSizeKB * 1024;
-                int currentSize = bitmap.getByteCount() / 1024;
-
-                if (currentSize > maxSizeKB) {
-                    float scale = (float) Math.sqrt(maxSizeBytes / (float) currentSize);
-                    int width = Math.round(bitmap.getWidth() * scale);
-                    int height = Math.round(bitmap.getHeight() * scale);
-
-                    bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+                url = new URL(requestURL);
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setReadTimeout(20000);
+                httpURLConnection.setConnectTimeout(20000);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+                outputStream = httpURLConnection.getOutputStream();
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                bufferedWriter.write(bufferedWriterDataFN(PData));
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+                RC = httpURLConnection.getResponseCode();
+                if (RC == HttpsURLConnection.HTTP_OK) {
+                    bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+                    stringBuilder = new StringBuilder();
+                    String RC2;
+                    while ((RC2 = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(RC2);
+                    }
                 }
-
-                // Mengonversi gambar menjadi byte array
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-                byte[] imageBytes = byteArrayOutputStream.toByteArray();
-
-                // Mengonversi byte array menjadi string base64
-                String imageData = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-
-                // Membuat objek ImageModel
-                ImageModel imageModel = new ImageModel(imageData);
-
-                // Memanggil Retrofit untuk mengirim gambar ke server
-                Call<Void> call = apiService.uploadImage(imageModel);
-                Response<Void> response = call.execute();
-
-                return response.isSuccessful();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-                return false;
             }
+            return stringBuilder.toString();
         }
 
-        @Override
-        protected void onPostExecute(Boolean isSuccess) {
-            if (isSuccess) {
-                Toast.makeText(requireActivity(), "Gambar Terkirim ke Database", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(requireActivity(), "Gagal Mengirim Gambar", Toast.LENGTH_SHORT).show();
+        private String bufferedWriterDataFN(HashMap<String, String> HashMapParams) throws UnsupportedEncodingException {
+            stringBuilder = new StringBuilder();
+            for (Map.Entry<String, String> KEY : HashMapParams.entrySet()) {
+                if (check)
+                    check = false;
+                else
+                    stringBuilder.append("&");
+                stringBuilder.append(URLEncoder.encode(KEY.getKey(), "UTF-8"));
+                stringBuilder.append("=");
+                stringBuilder.append(URLEncoder.encode(KEY.getValue(), "UTF-8"));
             }
+            return stringBuilder.toString();
         }
     }
+
+
+
 
 }

@@ -6,5 +6,6 @@
         <item name="colorPrimary">@color/ijo</item>
         <item name="colorPrimaryDark">@color/tuek</item>
         <item name="colorAccent">@color/nom</item>
+        <item name="android:statusBarColor">@color/light_blue_500</item>
     </style>
 </resources>

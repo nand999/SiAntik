@@ -3,9 +3,11 @@ package com.example.SiAntik;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.*;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import retrofit2.Call;
@@ -15,16 +17,21 @@ import retrofit2.Response;
 public class LupaActivity extends AppCompatActivity {
     Button buttonKembali,btnSimpan;
     EditText edtNik,edtNama,edtPass,edtPassKon;
+    ImageButton btnEye;
+    private boolean isPasswordVisible;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lupa_sandi);
         buttonKembali = (Button) findViewById(R.id.ButtonKembali);
         btnSimpan = (Button) findViewById(R.id.btnSimpan);
+        btnEye = (ImageButton) findViewById(R.id.btn_eyeLup);
         edtNik = (EditText) findViewById(R.id.EditTextNIKLupa);
         edtNama = (EditText) findViewById(R.id.EditTextNamaLupa);
         edtPass = (EditText) findViewById(R.id.EditTextPassBaru);
         edtPassKon = (EditText) findViewById(R.id.EditTextPassBaruKon);
+        isPasswordVisible = false;
+
 
         buttonKembali.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,6 +45,25 @@ public class LupaActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 resetPassword();
+            }
+        });
+
+        btnEye.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isPasswordVisible) {
+                    // Jika password sedang terlihat, sembunyikan teks
+                    edtPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    edtPassKon.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                } else {
+                    // Jika password sedang tersembunyi, tampilkan teks
+                    edtPass.setTransformationMethod(null);
+                    edtPassKon.setTransformationMethod(null);
+                }
+                isPasswordVisible = !isPasswordVisible;
+                // Perbarui ikon mata sesuai dengan status isPasswordVisible
+//                int imgResource = isPasswordVisible ? R.drawable.ic_eye_open : R.drawable.ic_eye;
+//                btnEye.setImageResource(imgResource);
             }
         });
 

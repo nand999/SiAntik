@@ -1,12 +1,13 @@
 package com.example.SiAntik;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface RetrofitEndPoint {
     @FormUrlEncoded
@@ -17,11 +18,12 @@ public interface RetrofitEndPoint {
     );
 
     @FormUrlEncoded
-    @POST("registerMobile.php")
+    @POST("registerMobile1.php")
     Call<UserResponse> register(
             @Field("nik_user") String nik_user,
             @Field("nama_user") String nama_user,
             @Field("rt_rw") String rt_rw,
+            @Field("no_rumah") String no_rumah,
             @Field("password_user") String password_user
     );
 
@@ -33,6 +35,32 @@ public interface RetrofitEndPoint {
             @Field("new_password") String newPassword
     );
 
-    @GET("getDataLaporan.php")
-    Call<List<getLaporanResponse>> getDataLaporan();
+    @GET("data_laporan.php")
+    Call<StatusData> getStatusData();
+
+    @GET("getStatusCounts.php")
+    Call<List<MonthlyStatusCount>> getMonthlyStatusCount();
+
+    @FormUrlEncoded
+    @POST("uploadGambar.php") // Ganti dengan URL endpoint PHP Anda
+    Call<Void> uploadImage(
+            @Field("nik_user") String nik_user,
+            @Field("foto") String imageData, // Data gambar dalam format base64
+            @Field("deskripsi") String description // Deskripsi gambar
+    );
+
+    // Endpoint untuk mengambil NIK berdasarkan username
+    @GET("getNIK.php")
+    Call<NIKResponse> getNIK(@Query("nama_user") String nama_user);
+
+    @FormUrlEncoded
+    @POST("updateProfile.php")
+    Call<UserResponse> updateProfile(
+            @Field("nik_user") String nik_user,
+            @Field("nama_user") String nama_user,
+            @Field("rt_rw") String rt_rw,
+            @Field("no_rumah") String no_rumah
+    );
+
+
 }

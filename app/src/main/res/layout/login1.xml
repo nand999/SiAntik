@@ -39,10 +39,19 @@
                     android:layout_gravity="center"
                     android:hint="Nama Lengkap" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/btn_eye"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_eye"/>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="5dp"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/EditTextPass"
@@ -50,8 +59,10 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:layout_gravity="center"
-                    android:hint="Kata Sandi" />
+                    android:hint="Kata Sandi"
+                    android:inputType="textPassword"/>
             </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView

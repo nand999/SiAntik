@@ -63,8 +63,16 @@
                         android:hint="Nama Lengkap"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+            <ImageButton
+                android:id="@+id/btn_eyeLup"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_eye"
+                android:layout_gravity="right"
+                android:layout_marginRight="20dp"/>
             <androidx.cardview.widget.CardView
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="5dp"
                 android:layout_width="300dp"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content"
