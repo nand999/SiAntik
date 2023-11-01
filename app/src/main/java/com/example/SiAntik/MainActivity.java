@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -108,6 +110,27 @@ public class MainActivity extends AppCompatActivity {
         if (berandaFragment != null) {
             berandaFragment.updateNama(namaBaru);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Tampilkan peringatan
+        new AlertDialog.Builder(this)
+                .setTitle("Keluar Aplikasi")
+                .setMessage("Apakah Anda yakin ingin kembali ke halaman login?")
+                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Keluar dari aplikasi
+                        finish();
+                    }
+                })
+                .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Batal keluar
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 }
 

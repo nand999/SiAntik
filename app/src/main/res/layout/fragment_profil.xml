@@ -35,6 +35,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NIK:"
+                android:textSize="25dp"
+                android:textColor="@color/white"
+                android:layout_marginLeft="5dp"/>
+            <TextView
                 android:id="@+id/txtNikProfil"
                 android:layout_marginTop="20dp"
                 android:layout_width="300dp"
@@ -43,6 +50,14 @@
                 android:textSize="20sp"
                 android:textColor="@color/white"
                 android:textAlignment="viewStart"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nama:"
+                android:textSize="25dp"
+                android:textColor="@color/white"
+                android:layout_marginLeft="5dp"/>
             <TextView
                 android:id="@+id/txtNamaProfil"
                 android:layout_marginTop="20dp"
@@ -53,6 +68,14 @@
                 android:textColor="@color/white"
                 android:textAlignment="viewStart"/>
             <TextView
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="RT/RW:"
+                android:textSize="25dp"
+                android:textColor="@color/white"
+                android:layout_marginLeft="5dp"/>
+            <TextView
                 android:id="@+id/txtRtProfil"
                 android:layout_marginTop="20dp"
                 android:layout_width="300dp"
@@ -61,6 +84,14 @@
                 android:textSize="20sp"
                 android:textColor="@color/white"
                 android:textAlignment="viewStart"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No. Rumah:"
+                android:textSize="25dp"
+                android:textColor="@color/white"
+                android:layout_marginLeft="5dp"/>
             <TextView
                 android:id="@+id/txtNoProfil"
                 android:layout_marginTop="20dp"

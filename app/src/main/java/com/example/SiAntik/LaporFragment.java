@@ -92,6 +92,7 @@ public class LaporFragment extends Fragment {
     private int GALLERY = 1, CAMERA = 2;
 
     private ApiService apiService;
+    private int imageType = -1;
 
 
     public LaporFragment() {
@@ -127,7 +128,7 @@ public class LaporFragment extends Fragment {
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                edtDes.setText("");
+                clearSemua();
             }
         });
 
@@ -142,7 +143,12 @@ public class LaporFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 GetImageNameFromEditText = edtDes.getText().toString();
-                UploadImageToServer();
+                if (FixBitmap != null) {
+                    UploadImageToServer();
+                    clearSemua();
+                } else {
+                    Toast.makeText(getContext(), "Pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -152,8 +158,8 @@ public class LaporFragment extends Fragment {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getContext());
         pictureDialog.setTitle("Select Action");
         String[] pictureDialogItems = {
-                "Photo Gallery",
-                "Camera"
+                "Ambil Dari Galeri",
+                "Ambil Foto Dari Kamera"
         };
         pictureDialog.setItems(pictureDialogItems, new DialogInterface.OnClickListener() {
             @Override
@@ -177,6 +183,7 @@ public class LaporFragment extends Fragment {
     }
 
     private void takePhotoFromCamera() {
+        imageType = CAMERA;
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, CAMERA);
     }
@@ -206,45 +213,61 @@ public class LaporFragment extends Fragment {
         }
     }
 
+
     public void UploadImageToServer() {
-        FixBitmap.compress(Bitmap.CompressFormat.JPEG, 40, byteArrayOutputStream);
-        byteArray = byteArrayOutputStream.toByteArray();
-        ConvertImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
-
-        class AsyncTaskUploadClass extends AsyncTask<Void, Void, String> {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = ProgressDialog.show(getContext(), "Image is Uploading", "Please Wait", false, false);
+        byteArrayOutputStream = new ByteArrayOutputStream();
+        if (FixBitmap != null) {
+            if (imageType == CAMERA) {
+                // Jika gambar diambil dari kamera, gunakan format PNG untuk menghindari kompresi
+                FixBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            } else {
+                // Jika gambar diambil dari galeri, gunakan format JPEG dengan kualitas 100
+                FixBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             }
+            byteArray = byteArrayOutputStream.toByteArray();
+            ConvertImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
-            @Override
-            protected void onPostExecute(String string1) {
-                super.onPostExecute(string1);
-                progressDialog.dismiss();
-                Toast.makeText(getContext(), string1, Toast.LENGTH_LONG).show();
+            class AsyncTaskUploadClass extends AsyncTask<Void, Void, String> {
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    progressDialog = ProgressDialog.show(getContext(), "Image is Uploading", "Please Wait", false, false);
+                }
+
+                @Override
+                protected void onPostExecute(String string1) {
+                    super.onPostExecute(string1);
+                    progressDialog.dismiss();
+                    Toast.makeText(getContext(), string1, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                protected String doInBackground(Void... params) {
+                    ImageProcessClass imageProcessClass = new ImageProcessClass();
+                    HashMap<String, String> HashMapParams = new HashMap<String, String>();
+                    SharedPreferences sharedPref = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                    String nik_user = sharedPref.getString("NIK", ""); // Mendapatkan nik_user dari SharedPreferences
+
+                    String deskripsi = edtDes.getText().toString();
+
+                    HashMapParams.put(ImageTag, GetImageNameFromEditText);
+                    HashMapParams.put(ImageName, ConvertImage);
+                    HashMapParams.put(Deskripsi, deskripsi);
+                    HashMapParams.put("nik_user", nik_user);
+
+                    String FinalData = imageProcessClass.ImageHttpRequest("http://172.17.202.159:8080/test_siantik/mobile/upGambar.php", HashMapParams);
+
+                    return FinalData;
+                }
             }
-
-            @Override
-            protected String doInBackground(Void... params) {
-                ImageProcessClass imageProcessClass = new ImageProcessClass();
-                HashMap<String, String> HashMapParams = new HashMap<String, String>();
-                SharedPreferences sharedPref = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-                String nik_user = sharedPref.getString("NIK", ""); // Mendapatkan nik_user dari SharedPreferences
-
-                HashMapParams.put(ImageTag, GetImageNameFromEditText);
-                HashMapParams.put(ImageName, ConvertImage);
-                HashMapParams.put(Deskripsi, GetImageNameFromEditText);
-                HashMapParams.put("nik_user", nik_user);
-
-                String FinalData = imageProcessClass.ImageHttpRequest("http://172.16.106.11:8080/test_siantik/mobile/upGambar.php", HashMapParams);
-
-                return FinalData;
-            }
+            AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+            AsyncTaskUploadClassOBJ.execute();
+        } else {
+            // Tampilkan pesan kesalahan karena FixBitmap masih null
+            Toast.makeText(getContext(), "Gambar belum dipilih.", Toast.LENGTH_SHORT).show();
         }
-        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
-        AsyncTaskUploadClassOBJ.execute();
     }
+
 
     public class ImageProcessClass {
         public String ImageHttpRequest(String requestURL, HashMap<String, String> PData) {
@@ -291,6 +314,11 @@ public class LaporFragment extends Fragment {
             }
             return stringBuilder.toString();
         }
+    }
+
+    public void clearSemua() {
+        imageView.setImageResource(0); // Mengosongkan ImageView
+        edtDes.setText(""); // Mengosongkan EditText
     }
 
 

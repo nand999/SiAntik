@@ -91,8 +91,10 @@ public class ProfilFragment extends Fragment {
             // Perbarui tampilan profil berdasarkan data yang diterima dari EditBioFragment
             String nama = profileData.getString("nama");
             String rt = profileData.getString("rt");
+            String no = profileData.getString("no");
             txtNama.setText(nama);
             txtRt.setText(rt);
+            txtNo.setText(no);
         }
 
         btnEdit.setOnClickListener(new View.OnClickListener() {

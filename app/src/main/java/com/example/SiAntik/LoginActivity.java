@@ -2,7 +2,9 @@ package com.example.SiAntik;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -72,7 +74,10 @@ public class LoginActivity extends AppCompatActivity {
         ButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginUser1();
+                if (etPassword.getText().length()<8){
+                    Toast.makeText(LoginActivity.this, "Panjang sandi minimal 8 karakter", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {loginUser1();}
             }
         });
 
@@ -128,18 +133,39 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra("NO_RUMAH", no);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(getApplicationContext(), "Gagal mengambil data pengguna", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Gagal mengambil data pengguna", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Tampilkan peringatan
+        new AlertDialog.Builder(this)
+                .setTitle("Keluar Aplikasi")
+                .setMessage("Apakah Anda yakin ingin keluar dari aplikasi?")
+                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Keluar dari aplikasi
+                        finish();
+                    }
+                })
+                .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Batal keluar
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
 

@@ -1,8 +1,13 @@
 package com.example.SiAntik;
 
+import static com.example.SiAntik.RetrofitClient.BASE_URL;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +15,9 @@ import java.util.List;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -29,8 +36,12 @@ import com.github.mikephil.charting.data.BarEntry;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class BerandaFragment extends Fragment {
+
+    private ImageView imageView;
 
     public BerandaFragment() {
 
@@ -43,26 +54,39 @@ public class BerandaFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (imageView != null) {
+            checkLaporanStatus();
+        }
+    }
+
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_beranda, container, false);
 
         PieChart pieChart = view.findViewById(R.id.pieChart);
         setUpPieChart(pieChart);
 
-        BarChart barChart = view.findViewById(R.id.barChart);
-        setUpBarChart(barChart);
+//        BarChart barChart = view.findViewById(R.id.barChart);
+//        setUpBarChart(barChart);
 
         BarChart barChart1 = view.findViewById(R.id.barChart1);
         getDataAndSetUpMonthlyStatus1BarChart(barChart1);
 
         TextView nama = view.findViewById(R.id.txt_nama);
+        imageView = view.findViewById(R.id.imageBeranda);
 
         Bundle extras = getActivity().getIntent().getExtras();
         if (extras != null) {
             String nama1 = extras.getString("NAMA");
-            String nik = extras.getString("NO_RUMAH");
-            nama.setText(nik + " " + nama1);
+            nama.setText(nama1);
         }
+
+        checkLaporanStatus();
+
         return view;
     }
 
@@ -252,4 +276,45 @@ public class BerandaFragment extends Fragment {
 
         return labels;
     }
+
+
+
+    private void checkLaporanStatus() {
+        Bundle extras = getActivity().getIntent().getExtras();
+        String nik_user = extras.getString("NIK");
+
+        RetrofitEndPoint layananApi = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
+
+        Call<StatusData1> panggilan = layananApi.getStatusData(nik_user);
+
+        panggilan.enqueue(new Callback<StatusData1>() {
+            @Override
+            public void onResponse(Call<StatusData1> call, Response<StatusData1> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    StatusData1 statusData = response.body();
+                    String status = statusData.getStatus();
+
+                    if (status.equals("sudah_lapor")) {
+                        // Tampilkan gambar "anda sudah lapor"
+                        imageView.setImageResource(R.drawable.ic_yes);
+                    } else if (status.equals("belum_lapor")) {
+                        // Tampilkan gambar "anda belum lapor bulan ini"
+                        imageView.setImageResource(R.drawable.ic_not);
+                    } else if(status.equals("error")){
+                        imageView.setImageResource(R.drawable.ic_not);
+                    }
+                } else {
+                    // Handle respon server tidak berhasil di sini
+                    Toast.makeText(getContext(), "Gagal memeriksa status laporan", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusData1> call, Throwable t) {
+                // Handle kegagalan koneksi atau panggilan API di sini
+                t.printStackTrace();
+            }
+        });
+    }
+
 }

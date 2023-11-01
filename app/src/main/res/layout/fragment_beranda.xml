@@ -33,11 +33,16 @@
         android:id="@+id/pieChart"
         android:layout_width="match_parent"
         android:layout_height="300dp"/>
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barChart"
-        android:layout_marginTop="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+        <ImageView
+            android:id="@+id/imageBeranda"
+            android:layout_width="match_parent"
+            android:layout_marginTop="30dp"
+            android:layout_height="200dp"/>
+<!--    <com.github.mikephil.charting.charts.BarChart-->
+<!--        android:id="@+id/barChart"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="300dp"/>-->
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barChart1"
         android:layout_marginTop="30dp"

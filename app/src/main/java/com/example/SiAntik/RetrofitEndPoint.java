@@ -62,5 +62,11 @@ public interface RetrofitEndPoint {
             @Field("no_rumah") String no_rumah
     );
 
+    @FormUrlEncoded
+    @POST("cekLaporan.php") // Ganti dengan URL endpoint PHP Anda
+    Call<StatusData1> getStatusData(
+            @Field("nik_user") String nik_user);
+
+
 
 }
