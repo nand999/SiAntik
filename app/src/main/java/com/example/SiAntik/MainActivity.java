@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         // Tampilkan peringatan
         new AlertDialog.Builder(this)
-                .setTitle("Keluar Aplikasi")
+                .setTitle("Kembali ke login")
                 .setMessage("Apakah Anda yakin ingin kembali ke halaman login?")
                 .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

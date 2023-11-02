@@ -9,10 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.example.SiAntik.cadangan.ApiClient;
 import com.example.SiAntik.cadangan.ApiService;
@@ -93,6 +96,41 @@ public class LoginActivity extends AppCompatActivity {
                     etPassword.setTransformationMethod(null);
                     isPasswordVisible = true;
                 }
+            }
+        });
+
+        username.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == keyEvent.KEYCODE_ENTER){
+                    etPassword.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == KeyEvent.KEYCODE_ENTER){
+
+                    ButtonLogin.isPressed();
+//                    loginUser1();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        etPassword.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int actionId, KeyEvent keyEvent) {
+                if (actionId == keyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_DOWN){
+                    ButtonLogin.isPressed();
+                    return true;
+                }
+                return false;
             }
         });
     }

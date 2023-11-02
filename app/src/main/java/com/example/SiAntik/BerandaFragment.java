@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +22,16 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.data.BarData;
@@ -78,6 +83,7 @@ public class BerandaFragment extends Fragment {
 
         TextView nama = view.findViewById(R.id.txt_nama);
         imageView = view.findViewById(R.id.imageBeranda);
+
 
         Bundle extras = getActivity().getIntent().getExtras();
         if (extras != null) {
@@ -215,9 +221,10 @@ public class BerandaFragment extends Fragment {
     private void getDataAndSetUpMonthlyStatus1BarChart(final BarChart barChart) {
         barChart.getDescription().setEnabled(false);
         final ArrayList<BarEntry> entries = new ArrayList<>();
-        final ArrayList<String> xAxisLabels = new ArrayList<>();
-        RetrofitEndPoint layananApi = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
+        final ArrayList<String> xAxisLabels = new ArrayList();
 
+        // Ambil data bulan dan jumlahnya dari server
+        RetrofitEndPoint layananApi = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
         Call<List<MonthlyStatusCount>> panggilan = layananApi.getMonthlyStatusCount();
 
         panggilan.enqueue(new Callback<List<MonthlyStatusCount>>() {
@@ -230,20 +237,44 @@ public class BerandaFragment extends Fragment {
                     for (MonthlyStatusCount monthlyStatusCount : monthlyStatusCounts) {
                         if (monthlyStatusCount.getMonth() != null && !monthlyStatusCount.getMonth().isEmpty()) {
                             entries.add(new BarEntry(index, monthlyStatusCount.getCount()));
-                            xAxisLabels.add(monthlyStatusCount.getMonth());
+                            xAxisLabels.add(getMonthName(monthlyStatusCount.getMonth())); // Ambil nama bulan
                             index++;
                         }
                     }
 
-                    BarDataSet barDataSet = new BarDataSet(entries, "Status = 1 Counts");
-                    barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+                    BarDataSet barDataSet = new BarDataSet(entries, "Jumlah kasus positif jentik");
+                    barDataSet.setColors(Color.RED);
+                    barDataSet.setValueTextSize(14f);
 
                     BarData barData = new BarData(barDataSet);
-                    barChart.setData(barData);
 
-                    barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-                    barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xAxisLabels));
-                    barChart.getXAxis().setLabelRotationAngle(45f);
+
+                    // Mengatur formatter untuk sumbu Y agar angka bilangan bulat
+//                    barData.setValueFormatter(new DefaultValueFormatter(0));
+
+                    barData.setValueFormatter(new IntegerValueFormatter());
+                    barChart.setData(barData);
+//                    barChart.getAxisLeft().setValueFormatter(new IntegerValueFormatter());
+
+
+
+
+
+                    YAxis yAxis = barChart.getAxisLeft();
+                    yAxis.setTextSize(12f);
+                    yAxis.setGranularity(1f); // Ini penting agar angka di sumbu Y hanya menampilkan bilangan bulat
+                    yAxis.setAxisMinimum(0f);
+                    yAxis.setValueFormatter(new IntegerValueFormatter());
+
+                    // Konfigurasi sumbu X
+                    XAxis xAxis = barChart.getXAxis();
+                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                    xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabels));
+                    xAxis.setGranularity(1f);
+                    xAxis.setLabelCount(xAxisLabels.size());
+                    xAxis.setDrawLabels(true); // Menonaktifkan rotasi label
+                    xAxis.setDrawGridLines(false); // Optional: Menonaktifkan garis grid jika tidak dibutuhkan
+
                     barChart.getDescription().setText("Monthly Status = 1 Counts");
                     barChart.getDescription().setTextSize(12f);
                     barChart.getAxisRight().setEnabled(false);
@@ -258,6 +289,14 @@ public class BerandaFragment extends Fragment {
             }
         });
     }
+
+
+    private void tampilkanPesanKegagalan() {
+        // Tampilkan pesan kesalahan kepada pengguna jika diperlukan
+        Toast.makeText(getContext(), "Gagal mengambil data bulan per bulan", Toast.LENGTH_SHORT).show();
+    }
+
+
     private List<String> getXAxisLabels() {
         List<String> labels = new ArrayList<>();
         // Gantilah ini dengan label-label bulan yang sesuai dengan data Anda
@@ -282,6 +321,8 @@ public class BerandaFragment extends Fragment {
     private void checkLaporanStatus() {
         Bundle extras = getActivity().getIntent().getExtras();
         String nik_user = extras.getString("NIK");
+//        SharedPreferences sharedPref = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+//        String nik_user = sharedPref.getString("NIK", "");
 
         RetrofitEndPoint layananApi = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
 
@@ -317,4 +358,24 @@ public class BerandaFragment extends Fragment {
         });
     }
 
+    private String getMonthName(String month) {
+        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        int monthIndex = Integer.parseInt(month) - 1;
+        if (monthIndex >= 0 && monthIndex < monthNames.length) {
+            return monthNames[monthIndex];
+        }
+        return month;
+    }
+
+}
+
+class IntegerValueFormatter extends ValueFormatter {
+    @Override
+    public String getBarLabel(BarEntry barEntry) {
+        return String.valueOf((int) barEntry.getY()); // Mengonversi nilai ke bilangan bulat
+    }
+    @Override
+    public String getAxisLabel(float value, AxisBase axis) {
+        return String.valueOf((int) value);
+    }
 }

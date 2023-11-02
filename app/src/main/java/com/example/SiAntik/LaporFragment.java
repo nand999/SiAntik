@@ -231,7 +231,7 @@ public class LaporFragment extends Fragment {
                 @Override
                 protected void onPreExecute() {
                     super.onPreExecute();
-                    progressDialog = ProgressDialog.show(getContext(), "Image is Uploading", "Please Wait", false, false);
+                    progressDialog = ProgressDialog.show(getContext(), "Foto sedang di unggah", "Mohon Tunggu....", false, false);
                 }
 
                 @Override
@@ -255,7 +255,7 @@ public class LaporFragment extends Fragment {
                     HashMapParams.put(Deskripsi, deskripsi);
                     HashMapParams.put("nik_user", nik_user);
 
-                    String FinalData = imageProcessClass.ImageHttpRequest("http://172.17.202.159:8080/test_siantik/mobile/upGambar.php", HashMapParams);
+                    String FinalData = imageProcessClass.ImageHttpRequest("http://172.16.103.9:8080/test_siantik/mobile/upGambar.php", HashMapParams);
 
                     return FinalData;
                 }

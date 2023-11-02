@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.*;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import retrofit2.Call;
@@ -31,6 +34,8 @@ public class LupaActivity extends AppCompatActivity {
         edtPass = (EditText) findViewById(R.id.EditTextPassBaru);
         edtPassKon = (EditText) findViewById(R.id.EditTextPassBaruKon);
         isPasswordVisible = false;
+
+        edtNik.requestFocus();
 
 
         buttonKembali.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +71,60 @@ public class LupaActivity extends AppCompatActivity {
 //                btnEye.setImageResource(imgResource);
             }
         });
+
+        edtNik.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    edtNama.requestFocus();
+                }
+                return false;
+            }
+        });
+
+        edtNama.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    edtPass.requestFocus();
+                }
+                return false;
+            }
+        });
+
+        edtPass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    edtPassKon.requestFocus();
+                }
+                return false;
+            }
+        });
+
+        edtPassKon.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    btnSimpan.isPressed();
+                }
+                return false;
+            }
+        });
+
+        edtPassKon.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_DOWN){
+                    btnSimpan.isPressed();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+
 
     }
 

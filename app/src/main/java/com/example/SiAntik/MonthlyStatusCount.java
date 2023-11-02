@@ -3,10 +3,10 @@ package com.example.SiAntik;
 import com.google.gson.annotations.SerializedName;
 
 public class MonthlyStatusCount {
-    @SerializedName("month")
+    @SerializedName("bulan")
     private String month;
 
-    @SerializedName("count")
+    @SerializedName("jumlah")
     private int count;
 
     public MonthlyStatusCount(String month, int count) {

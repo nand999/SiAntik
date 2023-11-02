@@ -5,10 +5,13 @@ import android.content.*;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -36,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
         edtNo = (EditText) findViewById(R.id.EditTextNo);
         edtPass = (EditText) findViewById(R.id.EditTextPassReg);
         edtPassCon = (EditText) findViewById(R.id.EditTextPassCon);
+        edtId.requestFocus();
         buttonKembali.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,6 +103,81 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+            edtId.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                    if (i == EditorInfo.IME_ACTION_DONE ){
+                      edtNama.requestFocus();
+                    }
+                    return false;
+                }
+            });
+
+        edtNama.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    edtbRt.requestFocus();
+                }
+                return false;
+            }
+        });
+
+        edtbRt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    edtNo.requestFocus();
+                }
+                return false;
+            }
+        });
+
+        edtNo.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    edtPass.requestFocus();
+                }
+                return false;
+            }
+        });
+        edtPass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    edtPassCon.requestFocus();
+                }
+                return false;
+            }
+        });
+
+        edtPassCon.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT ){
+                    btnDaftar.isPressed();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        edtPassCon.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (i == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_DOWN){
+                    btnDaftar.isPressed();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+
+
+
 
     }
 
@@ -143,6 +222,9 @@ public class RegisterActivity extends AppCompatActivity {
                                 // Lakukan sesuatu dengan data pengguna yang berhasil diregistrasi
                             }
 
+                        } else if ("ada".equals(status)) {
+                            Toast.makeText(RegisterActivity.this,"NIK telah terdaftar", Toast.LENGTH_SHORT).show();
+                            
                         } else {
                             // Registrasi gagal, tangani pesan kesalahan jika diperlukan
                             Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
