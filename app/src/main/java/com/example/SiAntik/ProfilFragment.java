@@ -176,3 +176,6 @@ public class ProfilFragment extends Fragment {
     }
 
 }
+interface OnReturnToProfilListener {
+    void onReturnToProfil();
+}

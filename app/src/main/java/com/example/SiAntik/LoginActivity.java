@@ -77,7 +77,10 @@ public class LoginActivity extends AppCompatActivity {
         ButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (etPassword.getText().length()<8){
+                if (username.getText().length() == 0 || etPassword.getText().length() == 0) {
+                    Toast.makeText(LoginActivity.this, "Lengkapi data terlebih dahulu", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (etPassword.getText().length()<8){
                     Toast.makeText(LoginActivity.this, "Panjang sandi minimal 8 karakter", Toast.LENGTH_SHORT).show();
                     return;
                 } else {loginUser1();}
@@ -91,10 +94,12 @@ public class LoginActivity extends AppCompatActivity {
                     // Jika password sedang terlihat, sembunyikan teks
                     etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
                     isPasswordVisible = false;
+                    btnEye.setImageResource(R.drawable.ic_eye_close);
                 } else {
                     // Jika password sedang tersembunyi, tampilkan teks
                     etPassword.setTransformationMethod(null);
                     isPasswordVisible = true;
+                    btnEye.setImageResource(R.drawable.ic_eye);
                 }
             }
         });

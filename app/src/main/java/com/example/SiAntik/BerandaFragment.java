@@ -9,9 +9,13 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,12 +50,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class BerandaFragment extends Fragment {
 
+    private boolean isLaporFragmentDisabled = false; // Menandai apakah Fragment Lapor telah dinonaktifkan
+
     private ImageView imageView;
 
     public BerandaFragment() {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (imageView != null && !isLaporFragmentDisabled) {
+            checkLaporanStatus();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,6 +142,7 @@ public class BerandaFragment extends Fragment {
 
                     PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
 
+                    // Tambahkan parameter sliceSpace untuk menyembunyikan teks label pada bagian pie
                     pieDataSet.setSliceSpace(3f);
                     pieDataSet.setSelectionShift(5f);
 
@@ -135,8 +150,13 @@ public class BerandaFragment extends Fragment {
 
                     PieData pieData = new PieData(pieDataSet);
                     pieData.setValueFormatter(new PercentFormatter(pieChart));
-                    pieData.setValueTextSize(11f);
+
+                    // Atur ukuran teks label pada bagian pie menjadi 0f untuk menyembunyikannya
+                    pieData.setValueTextSize(0f);
                     pieData.setValueTextColor(Color.WHITE);
+
+                    // Menyembunyikan label pada pie chart (tetapi legenda akan tetap ada)
+                    pieChart.setDrawEntryLabels(false);
 
                     pieChart.setData(pieData);
                     pieChart.highlightValues(null);
@@ -163,6 +183,7 @@ public class BerandaFragment extends Fragment {
     }
 
 
+
 //    private void setUpPieChart(PieChart pieChart){
 //        // Inisialisasi data untuk pie chart
 //        PieDataSet pieDataSet = new PieDataSet(getPieChartData(), " ");
@@ -187,36 +208,21 @@ public class BerandaFragment extends Fragment {
 //        return entries;
 //    }
 
-    private void setUpBarChart(BarChart barChart){
-        // Inisialisasi data untuk bar chart
-        BarDataSet barDataSet = new BarDataSet(getBarChartData(), "Data Set");
-        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+//    private void setUpBarChart(BarChart barChart){
+//        // Inisialisasi data untuk bar chart
+//        BarDataSet barDataSet = new BarDataSet(getBarChartData(), "Data Set");
+//        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+//
+//        BarData barData = new BarData(barDataSet);
+//        barChart.setData(barData);
+//
+//        // Konfigurasi lainnya
+//        barChart.getDescription().setEnabled(false);
+//
+//        barChart.animateY(1000, Easing.EaseInOutCubic);
+//    }
 
-        BarData barData = new BarData(barDataSet);
-        barChart.setData(barData);
 
-        // Konfigurasi lainnya
-        barChart.getDescription().setEnabled(false);
-
-        barChart.animateY(1000, Easing.EaseInOutCubic);
-    }
-
-    private ArrayList<BarEntry> getBarChartData() {
-        ArrayList<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(1f, 20f,"January"));
-        entries.add(new BarEntry(2f, 50f,"February"));
-        entries.add(new BarEntry(3f, 40f,"March"));
-        entries.add(new BarEntry(4f, 20f,"April"));
-        entries.add(new BarEntry(5f, 30f,"May"));
-        entries.add(new BarEntry(6f, 40f,"June"));
-        entries.add(new BarEntry(7f, 20f,"July"));
-        entries.add(new BarEntry(8f, 10f,"August"));
-        entries.add(new BarEntry(9f, 60f,"September"));
-        entries.add(new BarEntry(10f, 40f,"October"));
-        entries.add(new BarEntry(11f, 40f,"November"));
-        entries.add(new BarEntry(12f, 40f,"December"));
-        return entries;
-    }
 
     private void getDataAndSetUpMonthlyStatus1BarChart(final BarChart barChart) {
         barChart.getDescription().setEnabled(false);
@@ -297,27 +303,6 @@ public class BerandaFragment extends Fragment {
     }
 
 
-    private List<String> getXAxisLabels() {
-        List<String> labels = new ArrayList<>();
-        // Gantilah ini dengan label-label bulan yang sesuai dengan data Anda
-        labels.add("January");
-        labels.add("February");
-        labels.add("March");
-        labels.add("April");
-        labels.add("May");
-        labels.add("June");
-        labels.add("July");
-        labels.add("August");
-        labels.add("September");
-        labels.add("October");
-        labels.add("November");
-        labels.add("December");
-
-        return labels;
-    }
-
-
-
     private void checkLaporanStatus() {
         Bundle extras = getActivity().getIntent().getExtras();
         String nik_user = extras.getString("NIK");
@@ -335,14 +320,21 @@ public class BerandaFragment extends Fragment {
                     StatusData1 statusData = response.body();
                     String status = statusData.getStatus();
 
-                    if (status.equals("sudah_lapor")) {
+                    if (status.equals("sudah_lapor_positif")) {
                         // Tampilkan gambar "anda sudah lapor"
                         imageView.setImageResource(R.drawable.ic_yes);
+                        disableLaporFragment();
                     } else if (status.equals("belum_lapor")) {
                         // Tampilkan gambar "anda belum lapor bulan ini"
                         imageView.setImageResource(R.drawable.ic_not);
                     } else if(status.equals("error")){
                         imageView.setImageResource(R.drawable.ic_not);
+                    } else if (status.equals("sudah_lapor_negatif")) {
+                        imageView.setImageResource(R.drawable.ic_seru);
+                        disableLaporFragment();
+                    } else if (status.equals("sudah_lapor_belum")) {
+                        imageView.setImageResource(R.drawable.ic_play);
+                        disableLaporFragment();
                     }
                 } else {
                     // Handle respon server tidak berhasil di sini
@@ -367,6 +359,33 @@ public class BerandaFragment extends Fragment {
         return month;
     }
 
+
+
+    private void disableLaporFragment() {
+        // Nonaktifkan Fragment Lapor setelah transaksi Fragment selesai
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null) {
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    Fragment laporFragment = fragmentManager.findFragmentByTag("LaporFragment");
+
+                    if (laporFragment != null) {
+                        // Set status di LaporFragment
+                        Bundle args = new Bundle();
+                        args.putString("status", "sudah lapor");
+                        laporFragment.setArguments(args);
+
+                        // Tampilkan pesan peringatan
+                        Toast.makeText(getContext(), "Anda sudah melaporkan, akses ke Fragment Lapor dinonaktifkan.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+
+
+
 }
 
 class IntegerValueFormatter extends ValueFormatter {
@@ -378,4 +397,8 @@ class IntegerValueFormatter extends ValueFormatter {
     public String getAxisLabel(float value, AxisBase axis) {
         return String.valueOf((int) value);
     }
+}
+
+ interface OnReturnToBerandaListener {
+    void onReturnToBeranda();
 }

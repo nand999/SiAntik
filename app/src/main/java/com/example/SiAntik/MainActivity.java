@@ -20,12 +20,25 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnReturnToBerandaListener, OnReturnToLaporListener, OnReturnToProfilListener{
 
     private BottomNavigationView bottomNavigationView;
     private String nama,nik;
     private String KEY_NAMA = "NAMA";
     ChipNavigationBar chipNavigationBar;
+
+    @Override
+    public void onReturnToBeranda() {
+        chipNavigationBar.setItemSelected(R.id.menu_beranda, true);
+    }
+    @Override
+    public void onReturnToLapor() {
+        chipNavigationBar.setItemSelected(R.id.menu_lapor, true);
+    }
+    @Override
+    public void onReturnToProfil() {
+        chipNavigationBar.setItemSelected(R.id.menu_profil, true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

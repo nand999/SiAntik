@@ -11,7 +11,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/ijo"
+        android:backgroundTint="@color/biru"
         android:layout_gravity="center"
         app:cardCornerRadius="20dp">
         <LinearLayout
@@ -34,48 +34,56 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="      Nama Anda:"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:layout_marginTop="20dp"/>
-            <EditText
-                android:id="@+id/edtNamaEdit"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textAlignment="viewStart"/>
-            <TextView
+                android:layout_marginTop="30dp"
+                app:boxBackgroundColor="@color/white">
+
+                <EditText
+                    android:id="@+id/edtNamaEdit"
+                    android:layout_gravity="center"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Nama"
+                    android:inputType="number"
+                    android:digits="0123456789"
+                    android:singleLine="true"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="      RT/RW:"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:layout_marginTop="20dp"/>
-            <EditText
-                android:id="@+id/edtRtEdit"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textAlignment="viewStart"/>
-            <TextView
+                android:layout_marginTop="15dp"
+                app:boxBackgroundColor="@color/white">
+
+                <EditText
+                    android:layout_gravity="center"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:hint="RT/RW"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:id="@+id/edtRtEdit"
+                    android:singleLine="true"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="      Nomor Rumah:"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:layout_marginTop="20dp"/>
-            <EditText
-                android:id="@+id/edtNoEdit"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textAlignment="viewStart"/>
+                android:layout_marginTop="15dp"
+                app:boxBackgroundColor="@color/white">
+
+                <EditText
+                    android:layout_gravity="center"
+                    android:id="@+id/edtNoEdit"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:hint="No. rumah"
+                    android:singleLine="true"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
             <LinearLayout
                 android:layout_marginTop="20dp"
                 android:layout_width="match_parent"

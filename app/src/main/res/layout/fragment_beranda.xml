@@ -6,30 +6,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BerandaFragment">
+    tools:context=".BerandaFragment"
+    android:background="@drawable/bg">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
         <TextView
+            android:layout_marginTop="20dp"
             android:layout_gravity="center"
-            android:gravity="center"
+            android:gravity="left"
+            android:layout_marginLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="login sebagai:"
-            android:textSize="15dp"/>
+            android:text="Selamat Datang:"
+            android:textSize="15dp"
+            android:textColor="@color/white"/>
         <TextView
             android:id="@+id/txt_nama"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
+            android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold"
+            android:layout_gravity="left"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_marginTop="40dp"
+            android:id="@+id/txt_grafik"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Grafik Pemantauan Bulan Ini"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
             android:textAlignment="center"/>
 
     <!-- TODO: Update blank fragment layout -->
     <com.github.mikephil.charting.charts.PieChart
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/pieChart"
         android:layout_width="match_parent"
         android:layout_height="300dp"/>
@@ -43,6 +61,14 @@
 <!--        android:layout_marginTop="30dp"-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="300dp"/>-->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Grafik Positif jentik tahun ini:"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="center"/>
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barChart1"
         android:layout_marginTop="30dp"

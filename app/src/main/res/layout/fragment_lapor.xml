@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".LaporFragment"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@drawable/bg">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -17,37 +17,36 @@
         android:orientation="vertical">
         <ImageButton
             android:id="@+id/btn_pilGam"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="0dp"
             android:layout_gravity="center"
             android:layout_width="380dp"
             android:layout_height="100dp"
             android:src="@drawable/ic_addphoto"/>
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="50dp"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_marginTop="10dp"
             android:scaleType="centerInside"
-            android:layout_marginLeft="100dp"/>
-        <TextView
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="20dp"
-            android:layout_width="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_gravity="center"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Deskripsi (keadaan):"
-            android:textSize="20dp"
-            android:textColor="@color/black"/>
+            android:layout_marginTop="20dp"
+            app:boxBackgroundColor="@color/white">
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:hint="Tambah Keterangan (opsional):"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:id="@+id/edtDes"/>
 
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/edtDes"
-            android:layout_width="380dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:inputType="textCapSentences|textMultiLine"
-            android:maxLength="2000"
-            android:maxLines="4"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,7 +70,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="147dp"
             android:layout_alignParentTop="true"
-            android:backgroundTint="@color/nom"
+            android:backgroundTint="@color/biru"
             android:layout_marginTop="35dp"
             android:text="Kirim"/>
         </LinearLayout>

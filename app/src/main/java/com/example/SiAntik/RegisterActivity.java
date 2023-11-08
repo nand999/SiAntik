@@ -91,10 +91,12 @@ public class RegisterActivity extends AppCompatActivity {
                     // Jika password sedang terlihat, sembunyikan teks
                     edtPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
                     edtPassCon.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    btnEye.setImageResource(R.drawable.ic_eye_close);
                 } else {
                     // Jika password sedang tersembunyi, tampilkan teks
                     edtPass.setTransformationMethod(null);
                     edtPassCon.setTransformationMethod(null);
+                    btnEye.setImageResource(R.drawable.ic_eye);
                 }
                 isPasswordVisible = !isPasswordVisible;
                 // Perbarui ikon mata sesuai dengan status isPasswordVisible
