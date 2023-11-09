@@ -55,5 +55,8 @@ dependencies {
     //chip nav bar
     implementation ("com.ismaeldivita.chipnavigation:chip-navigation-bar:1.3.2")
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.31")
+    // picasso image
+    implementation ("com.squareup.picasso:picasso:2.71828")
+
 }
 

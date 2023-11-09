@@ -144,6 +144,11 @@ public class LupaActivity extends AppCompatActivity {
             return;
         }
 
+        if (nik.length()<16 || nik.length()>16){
+            Toast.makeText(this, "panjang NIK tidak sesuai", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Panggil fungsi untuk melakukan reset sandi di sini, sesuai dengan logika Anda
         performPasswordReset(nik, nama, newPassword);
     }

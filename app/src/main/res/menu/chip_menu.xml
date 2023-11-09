@@ -9,6 +9,10 @@
         android:title="Lapor"
         android:icon="@drawable/ic_camera"
         app:cnb_backgroundColor="@color/white"/>
+    <item android:id="@+id/menu_history"
+        android:title="Riwayat"
+        android:icon="@drawable/ic_history"
+        app:cnb_backgroundColor="@color/white"/>
     <item android:id="@+id/menu_profil"
         android:title="Profil"
         android:icon="@drawable/ic_profil"

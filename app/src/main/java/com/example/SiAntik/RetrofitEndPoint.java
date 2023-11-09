@@ -42,14 +42,14 @@ public interface RetrofitEndPoint {
     Call<List<MonthlyStatusCount>> getMonthlyStatusCount();
 
     @FormUrlEncoded
-    @POST("uploadGambar.php") // Ganti dengan URL endpoint PHP Anda
+    @POST("uploadGambar.php")
     Call<Void> uploadImage(
             @Field("nik_user") String nik_user,
             @Field("foto") String imageData, // Data gambar dalam format base64
             @Field("deskripsi") String description // Deskripsi gambar
     );
 
-    // Endpoint untuk mengambil NIK berdasarkan username
+
     @GET("getNIK.php")
     Call<NIKResponse> getNIK(@Query("nama_user") String nama_user);
 
@@ -63,10 +63,21 @@ public interface RetrofitEndPoint {
     );
 
     @FormUrlEncoded
-    @POST("cekLaporan.php") // Ganti dengan URL endpoint PHP Anda
+    @POST("cekLaporan.php")
     Call<StatusData1> getStatusData(
             @Field("nik_user") String nik_user);
 
 
+    @FormUrlEncoded
+    @POST("getLaporanData.php")
+    Call<List<LaporanData>> getLaporanData(
+            @Field("nik_user") String nik_user);
 
+    @FormUrlEncoded
+    @POST("getDetailLaporan.php")
+    Call<List<LaporanData>> getDetailLaporan(
+            @Field("id_laporan") String id_laporan);
 }
+
+
+

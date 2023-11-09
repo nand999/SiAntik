@@ -104,6 +104,9 @@ public class MainActivity extends AppCompatActivity implements OnReturnToBeranda
                             case R.id.menu_profil:
                                 fragment = new ProfilFragment();
                                 break;
+                            case R.id.menu_history:
+                                fragment = new HistoryFragment();
+                                break;
                         }
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment_container,

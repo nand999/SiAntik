@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".DetailLaporanFragment"
+    android:orientation="vertical"
+    android:background="@drawable/bg">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Detail Laporan"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"/>
+
+    <ScrollView
+        android:layout_marginTop="45dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/id_lap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="id laporan"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"/>
+    <ImageView
+        android:id="@+id/foto"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/biru"
+        app:cardCornerRadius="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+    <TextView
+        android:id="@+id/tgl_lap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="tanggal laporan"
+        android:textSize="15dp"
+        android:textColor="@color/white"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"/>
+    <TextView
+        android:layout_marginTop="15dp"
+        android:id="@+id/tgl_pem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="tanggal pemantauan"
+        android:textSize="15dp"
+        android:textColor="@color/white"
+        android:layout_marginLeft="15dp" />
+    <TextView
+        android:layout_marginTop="15dp"
+        android:id="@+id/stat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="status"
+        android:textSize="15dp"
+        android:textColor="@color/white"
+        android:layout_marginLeft="15dp" />
+    <TextView
+        android:layout_marginTop="15dp"
+        android:id="@+id/des"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="deskripsi"
+        android:textSize="15dp"
+        android:textColor="@color/white"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="15dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/btnKembaliLapor"
+        android:layout_marginTop="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="kembali"
+        android:backgroundTint="@color/merah"
+        android:layout_gravity="right"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="10dp"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

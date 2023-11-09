@@ -63,11 +63,14 @@ public class RegisterActivity extends AppCompatActivity {
                 if (pass.isEmpty() || passKon.isEmpty() || no_rumah.isEmpty() || rt_rw.isEmpty() || nik.isEmpty() || nama.isEmpty()){
                     Toast.makeText(RegisterActivity.this,"Lengkapi semua data terlebih dahulu",Toast.LENGTH_SHORT).show();
                     return;
-                } else if (panjangNIK<12 || panjangNIK > 12){
+                } else if (panjangNIK<16 || panjangNIK > 16){
                     Toast.makeText(RegisterActivity.this,"panjang NIK tidak sesuai",Toast.LENGTH_SHORT).show();
                     return;
                 } else if (panjangPass<8) {
                     Toast.makeText(RegisterActivity.this,"panjang sandi minimal 8 karakter",Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (pass.contains(" ")) {
+                    Toast.makeText(RegisterActivity.this, "Sandi tidak boleh mengandung spasi", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (!pass.equals(passKon)) {
                     Toast.makeText(RegisterActivity.this,"sandi dan konfirmasi sandi tidak sesuai",Toast.LENGTH_SHORT).show();
