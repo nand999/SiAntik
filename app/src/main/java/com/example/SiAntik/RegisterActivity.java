@@ -52,7 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String nik = edtId.getText().toString();
-                String nama = edtNama.getText().toString();
+                String nama = edtNama.getText().toString().toLowerCase();
                 String pass = edtPass.getText().toString();
                 String passKon = edtPassCon.getText().toString();
                 String rt_rw = edtbRt.getText().toString();
@@ -194,7 +194,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Ganti dengan detail registrasi Anda
         String idakun = edtId.getText().toString();
-        String nama_user = edtNama.getText().toString();
+        String nama_user = edtNama.getText().toString().toLowerCase();
         String rt_rw = edtbRt.getText().toString();
         String no = edtNo.getText().toString();
         String password_user = edtPass.getText().toString();

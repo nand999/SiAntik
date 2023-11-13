@@ -77,6 +77,12 @@ public interface RetrofitEndPoint {
     @POST("getDetailLaporan.php")
     Call<List<LaporanData>> getDetailLaporan(
             @Field("id_laporan") String id_laporan);
+
+    @FormUrlEncoded
+    @POST("hapusLaporan.php")
+    Call<LaporanResponse> hapusLaporan(
+            @Field("id_laporan") String id_laporan
+    );
 }
 
 

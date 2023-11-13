@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -191,6 +193,7 @@ public class LaporFragment extends Fragment {
                 if (FixBitmap != null) {
                     UploadImageToServer();
                     clearSemua();
+                    alertSudah();
                 } else {
                     Toast.makeText(getContext(), "Pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show();
                 }
@@ -258,7 +261,7 @@ private Bitmap handleCapturedImage(Intent data) {
     byteArrayOutputStream = new ByteArrayOutputStream();
     if (data == null || data.getExtras() == null || !data.getExtras().containsKey("data")) {
         // Handling jika data dari pengambilan gambar tidak valid
-        Toast.makeText(getContext(), "Capture image failed or FixBitmap is null.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT).show();
         return null;
     }
 
@@ -315,7 +318,7 @@ private Bitmap handleCapturedImage(Intent data) {
                     btnSend.setVisibility(View.VISIBLE);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Gagal!", Toast.LENGTH_SHORT).show();
                 }
             }
         }  else if (requestCode == CAMERA) {
@@ -347,24 +350,44 @@ private Bitmap handleCapturedImage(Intent data) {
             ConvertImage = Base64.encodeToString(byteArray, Base64.NO_WRAP);
 
             class AsyncTaskUploadClass extends AsyncTask<Void, Void, String> {
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    progressDialog = ProgressDialog.show(getContext(), "Foto sedang di unggah", "Mohon Tunggu....", false, false);
+                private WeakReference<Context> contextRef;
+
+                AsyncTaskUploadClass(Context context) {
+                    this.contextRef = new WeakReference<>(context);
                 }
 
                 @Override
-                protected void onPostExecute(String string1) {
-                    super.onPostExecute(string1);
-                    progressDialog.dismiss();
-                    Toast.makeText(getContext(), string1, Toast.LENGTH_LONG).show();
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    Context context = contextRef.get();
+                    if (context != null) {
+                        progressDialog = ProgressDialog.show(context, "Foto sedang di unggah", "Mohon Tunggu....", false, false);
+                    } else {
+                        // Handle jika context null (mungkin activity/fragment sudah dihancurkan)
+                        Log.e("AsyncTaskError", "Context is null in onPreExecute");
+                        cancel(true); // Batalkan AsyncTask jika context null
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(String result) {
+                    super.onPostExecute(result);
+
+                    Context context = contextRef.get();
+                    if (context != null) {
+                        progressDialog.dismiss();
+                        Toast.makeText(context, "Gambar berhasil diunggah", Toast.LENGTH_LONG).show();
+                    } else {
+                        // Handle jika context null (mungkin activity/fragment sudah dihancurkan)
+                        Log.e("AsyncTaskError", "Context is null in onPostExecute");
+                    }
                 }
 
                 @Override
                 protected String doInBackground(Void... params) {
                     ImageProcessClass imageProcessClass = new ImageProcessClass();
-                    HashMap<String, String> HashMapParams = new HashMap<String, String>();
-                    SharedPreferences sharedPref = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                    HashMap<String, String> HashMapParams = new HashMap<>();
+                    SharedPreferences sharedPref = contextRef.get().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                     String nik_user = sharedPref.getString("NIK", ""); // Mendapatkan nik_user dari SharedPreferences
 
                     String deskripsi = edtDes.getText().toString();
@@ -374,12 +397,11 @@ private Bitmap handleCapturedImage(Intent data) {
                     HashMapParams.put(Deskripsi, deskripsi);
                     HashMapParams.put("nik_user", nik_user);
 
-                    String FinalData = imageProcessClass.ImageHttpRequest("http://172.16.106.16:8080/test_siantik/mobile/upGambar.php", HashMapParams);
-
-                    return FinalData;
+                    return imageProcessClass.ImageHttpRequest("http://172.17.202.21:8080/siantik/mobile/upGambar.php", HashMapParams);
                 }
             }
-            AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+
+            AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass(getContext());
             AsyncTaskUploadClassOBJ.execute();
         } else {
             // Tampilkan pesan kesalahan karena FixBitmap masih null
@@ -506,6 +528,30 @@ private Bitmap handleCapturedImage(Intent data) {
         new AlertDialog.Builder(getContext())
                 .setTitle("Anda sudah lapor")
                 .setMessage("Anda sudah melakukan lapor bulan ini")
+                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Panggil method onReturnToBeranda di MainActivity
+                        if (getActivity() instanceof MainActivity) {
+                            ((MainActivity) getActivity()).onReturnToBeranda();
+                        }
+
+                        // Kembali ke beranda fragment
+                        Fragment berandaFragment = new BerandaFragment();
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, berandaFragment);
+                        transaction.addToBackStack(null); // Jika Anda ingin menambahkannya ke tumpukan kembali
+                        transaction.commit();
+                    }
+                })
+                .show();
+
+    }
+
+    public void alertSudah() {
+        // Tampilkan peringatan dengan hanya pilihan "Ya"
+        new AlertDialog.Builder(getContext())
+                .setTitle("Laporan berhasil dikirim")
+                .setMessage("Anda sudah melakukan lapor")
                 .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Panggil method onReturnToBeranda di MainActivity

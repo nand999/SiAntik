@@ -130,7 +130,7 @@ public class LupaActivity extends AppCompatActivity {
 
     private void resetPassword() {
         String nik = edtNik.getText().toString();
-        String nama = edtNama.getText().toString();
+        String nama = edtNama.getText().toString().toLowerCase();
         String newPassword = edtPass.getText().toString();
         String confirmPassword = edtPassKon.getText().toString();
 

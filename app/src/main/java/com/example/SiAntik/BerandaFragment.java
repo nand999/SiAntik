@@ -53,6 +53,8 @@ public class BerandaFragment extends Fragment {
     private boolean isLaporFragmentDisabled = false; // Menandai apakah Fragment Lapor telah dinonaktifkan
 
     private ImageView imageView;
+    private Handler handler;
+    private static final long REFRESH_INTERVAL = 10000;
 
     public BerandaFragment() {
 
@@ -107,7 +109,30 @@ public class BerandaFragment extends Fragment {
 
         checkLaporanStatus();
 
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Refresh the charts
+                setUpPieChart(pieChart);
+                getDataAndSetUpMonthlyStatus1BarChart(barChart1);
+
+                // Schedule the next refresh
+                handler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        }, REFRESH_INTERVAL);
+
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // Remove the callback to stop the periodic task when the fragment is destroyed
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
     }
 
 

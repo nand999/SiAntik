@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class RetrofitClient {
 //    public static final String BASE_URL = "http://localhost:8080/test_siantik/mobile/";
 
-    public static final String BASE_URL = "http://172.16.106.16:8080/test_siantik/mobile/";
+    public static final String BASE_URL = "http://172.17.202.21:8080/siantik/mobile/";
 
 //   public static final String BASE_URL = "http://172.16.106.117:8080/test_siantik/mobile/"; //work
 

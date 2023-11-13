@@ -144,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
 
         RetrofitEndPoint retrofitEndPoint = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
 
-        Call<UserResponse> call = retrofitEndPoint.login(username.getText().toString(), etPassword.getText().toString());
+        Call<UserResponse> call = retrofitEndPoint.login(username.getText().toString().toLowerCase(), etPassword.getText().toString());
         call.enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {

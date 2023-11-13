@@ -1,5 +1,7 @@
 package com.example.SiAntik;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,9 +14,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.squareup.picasso.Picasso;
+import java.util.Calendar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DetailLaporanFragment extends Fragment {
+
+    private String bulanSekarang;
+    private String idLaporan;
 
     public DetailLaporanFragment() {
         // Required empty public constructor
@@ -37,17 +49,30 @@ public class DetailLaporanFragment extends Fragment {
             }
         });
 
+        Button hapus = rootView.findViewById(R.id.btnHapusLapor);
+
+        hapus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (cekBulanSekarang()){
+                    hapusLaporan(idLaporan);
+                }
+            }
+        });
+
         // Mendapatkan data yang dikirim dari HistoryFragment
         Bundle args = getArguments();
 
         if (args != null) {
-            String idLaporan = args.getString("id_laporan");
+            idLaporan = args.getString("id_laporan");
             String nikUser = args.getString("nik_user");
             String foto = args.getString("foto");
             String deskripsi = args.getString("deskripsi");
             String tanggalLaporan = args.getString("tanggal_laporan");
             String tanggalPemantauan = args.getString("tanggal_pemantauan");
             String status = args.getString("status");
+
+            bulanSekarang = tanggalLaporan.substring(5,7);
 
             // Menemukan tampilan berdasarkan ID
             TextView txtId = rootView.findViewById(R.id.id_lap);
@@ -82,7 +107,7 @@ public class DetailLaporanFragment extends Fragment {
             }
 
 
-            String urlFoto = "http://172.16.106.16:8080/test_siantik/mobile/" + foto;
+            String urlFoto = "http://172.17.202.21:8080/siantik/mobile/" + foto;
 
 
             // Menampilkan gambar (foto) menggunakan Picasso
@@ -90,5 +115,78 @@ public class DetailLaporanFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    public boolean cekBulanSekarang(){
+        Calendar calendar = Calendar.getInstance();
+
+        // Mendapatkan bulan saat ini dalam bentuk angka (0-11)
+        int currentMonth = calendar.get(Calendar.MONTH) + 1;
+        if (!bulanSekarang.equals(String.valueOf(currentMonth))){
+            alertSudah();
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    public void alertSudah() {
+        // Tampilkan peringatan dengan hanya pilihan "Ya"
+        new AlertDialog.Builder(getContext())
+                .setTitle("Gagal Menghapus")
+                .setMessage("Tidak dapat menghapus laporan di buan sebelumnya")
+                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                      return;
+                    }
+                })
+                .show();
+
+    }
+
+    private void hapusLaporan (String id_laporan) {
+        RetrofitEndPoint retrofitEndPoint = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
+
+        Call<LaporanResponse> call = retrofitEndPoint.hapusLaporan(id_laporan);
+
+        call.enqueue(new Callback<LaporanResponse>() {
+            @Override
+            public void onResponse(Call<LaporanResponse> call, Response<LaporanResponse> response) {
+                if (response.isSuccessful()) {
+                    // Profil berhasil diperbarui, Anda dapat menampilkan pesan sukses
+//                    Toast.makeText(getContext(), "Laporan berhasil dihapus", Toast.LENGTH_SHORT).show();
+
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Laporan berhasil dihapus")
+                            .setMessage("Silahkan kirim kembali laporan anda bulan ini")
+                            .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Panggil method onReturnToBeranda di MainActivity
+                                    if (getActivity() instanceof MainActivity) {
+                                        ((MainActivity) getActivity()).onReturnToBeranda();
+                                    }
+
+                                    // Kembali ke lapor fragment
+                                    Fragment laporFragment = new BerandaFragment();
+                                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.fragment_container, laporFragment);
+                                    transaction.addToBackStack(null); // Jika Anda ingin menambahkannya ke tumpukan kembali
+                                    transaction.commit();
+                                }
+                            })
+                            .show();
+
+                } else {
+                    // Terjadi kesalahan, Anda dapat menampilkan pesan kesalahan
+                    Toast.makeText(getContext(), "Gagal menghapus laporan", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LaporanResponse> call, Throwable t) {
+                // Terjadi kesalahan jaringan, Anda dapat menampilkan pesan kesalahan
+                Toast.makeText(getContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

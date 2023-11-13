@@ -71,7 +71,7 @@ public class HistoryFragment extends Fragment {
             public void onFailure(Call<List<LaporanData>> call, Throwable t) {
                 // Tangani kesalahan jaringan atau koneksi
                 // Tampilkan pesan kesalahan kepada pengguna menggunakan Toast
-                Toast.makeText(getContext(), "Kesalahan jaringan atau koneksi. Periksa koneksi internet Anda.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Tidak ada riwayat laporan", Toast.LENGTH_SHORT).show();
             }
         });
 

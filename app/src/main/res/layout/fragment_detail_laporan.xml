@@ -97,16 +97,37 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+            <LinearLayout
+                android:layout_marginTop="25dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
     <Button
-        android:id="@+id/btnKembaliLapor"
+        android:id="@+id/btnHapusLapor"
         android:layout_marginTop="25dp"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="kembali"
+        android:text="Hapus"
         android:backgroundTint="@color/merah"
         android:layout_gravity="right"
         android:layout_marginRight="15dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:textSize="13dp"/>
+
+                <Button
+                    android:id="@+id/btnKembaliLapor"
+                    android:layout_marginTop="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="Kembali"
+                    android:backgroundTint="@color/merah"
+                    android:layout_gravity="right"
+                    android:layout_marginLeft="198dp"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="13dp"/>
+
+            </LinearLayout>
 
 
         </LinearLayout>
