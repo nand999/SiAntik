@@ -80,10 +80,8 @@ public class HistoryFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Tangani tindakan saat item diklik di sini
                 LaporanData selectedLaporan = laporanDataList.get(position);
-
                 // Buat instance dari DetailLaporanFragment
                 DetailLaporanFragment detailFragment = new DetailLaporanFragment();
-
                 // Kirim data yang dibutuhkan ke DetailLaporanFragment
                 Bundle args = new Bundle();
                 args.putString("id_laporan", selectedLaporan.getIdLapor());
@@ -94,7 +92,6 @@ public class HistoryFragment extends Fragment {
                 args.putString("tanggal_pemantauan", selectedLaporan.getTanggalPemantauan());
                 args.putString("status", selectedLaporan.getStatuss());
                 detailFragment.setArguments(args);
-
                 // Ganti fragment saat item diklik
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, detailFragment);

@@ -1,5 +1,8 @@
 package com.example.SiAntik;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -90,8 +93,24 @@ public class EditBioFragment extends Fragment {
                 Bundle extras = getActivity().getIntent().getExtras();
                 String nikUser = extras.getString("NIK");
 
-                // Lakukan pembaruan profil dengan menggunakan Retrofit
-                updateProfile(nikUser, namaBaru, rtRwBaru, noRumahBaru);
+                if (noRumahBaru.isEmpty() || rtRwBaru.isEmpty() || noRumahBaru.isEmpty() ){
+                    Toast.makeText(getContext(), "Isi semua data terlebih dahulu", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (!isValidRtRwFormat(rtRwBaru)) {
+                    Toast.makeText(getContext(), "Format RT/RW harus 00/00", Toast.LENGTH_SHORT).show();
+                    return;
+                }  else if (!isValidNoFormat(noRumahBaru)) {
+                    Toast.makeText(getContext(), "Format no rumah harus 00", Toast.LENGTH_SHORT).show();
+                    return;
+                }  else if (!isValidRwLimit(rtRwBaru)) {
+                    Toast.makeText(getContext(), "RW hanya sampai RW 06", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (!isValidRtForRw(rtRwBaru)) {
+                    Toast.makeText(getContext(), "RT tidak sesuai dengan RW", Toast.LENGTH_SHORT).show();
+                    return;
+                } else{
+                    showConfirmationDialog(nikUser,namaBaru , rtRwBaru, noRumahBaru);
+                }
             }
         });
 
@@ -114,6 +133,51 @@ public class EditBioFragment extends Fragment {
     }
 
     // Method untuk melakukan pembaruan profil menggunakan Retrofit
+//    private void updateProfile(String nikUser, String namaBaru, String rtRwBaru, String noRumahBaru) {
+//        RetrofitEndPoint retrofitEndPoint = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
+//
+//        Call<UserResponse> call = retrofitEndPoint.updateProfile(nikUser, namaBaru, rtRwBaru, noRumahBaru);
+//
+//        call.enqueue(new Callback<UserResponse>() {
+//            @Override
+//            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+//                if (response.isSuccessful()) {
+//                    // Profil berhasil diperbarui, Anda dapat menampilkan pesan sukses
+//                    Toast.makeText(getContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
+//
+////                    MainActivity mainActivity = (MainActivity) getActivity();
+////                    if (mainActivity != null) {
+////                        mainActivity.updateNamaBeranda(namaBaru);
+////                    }
+//
+//                    // Kirim data profil yang diperbarui kembali ke ProfilFragment
+//                    Bundle updatedProfileData = new Bundle();
+//                    updatedProfileData.putString("nama", namaBaru);
+//                    updatedProfileData.putString("rt", rtRwBaru);
+//                    updatedProfileData.putString("no",noRumahBaru);
+//
+//                    ProfilFragment profilFragment = new ProfilFragment();
+//                    profilFragment.setArguments(updatedProfileData);
+//
+//                    // Ganti fragment kembali ke ProfilFragment
+//                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                    transaction.replace(R.id.fragment_container, profilFragment);
+//                    transaction.addToBackStack(null);
+//                    transaction.commit();
+//                } else {
+//                    // Terjadi kesalahan, Anda dapat menampilkan pesan kesalahan
+//                    Toast.makeText(getContext(), "Gagal memperbarui profil", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<UserResponse> call, Throwable t) {
+//                // Terjadi kesalahan jaringan, Anda dapat menampilkan pesan kesalahan
+//                Toast.makeText(getContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
     private void updateProfile(String nikUser, String namaBaru, String rtRwBaru, String noRumahBaru) {
         RetrofitEndPoint retrofitEndPoint = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
 
@@ -123,39 +187,155 @@ public class EditBioFragment extends Fragment {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if (response.isSuccessful()) {
-                    // Profil berhasil diperbarui, Anda dapat menampilkan pesan sukses
-                    Toast.makeText(getContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
 
-//                    MainActivity mainActivity = (MainActivity) getActivity();
-//                    if (mainActivity != null) {
-//                        mainActivity.updateNamaBeranda(namaBaru);
-//                    }
+                    UserResponse userResponse = response.body();
+                    if (userResponse != null) {
+                        String status = userResponse.getStatus();
+                        String message = userResponse.getMessage();
 
-                    // Kirim data profil yang diperbarui kembali ke ProfilFragment
-                    Bundle updatedProfileData = new Bundle();
-                    updatedProfileData.putString("nama", namaBaru);
-                    updatedProfileData.putString("rt", rtRwBaru);
-                    updatedProfileData.putString("no",noRumahBaru);
+                        if (status != null && status.equals("2")) {
+                            // Menampilkan toast jika status = 0
+                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if (status != null && status.equals("3")) {
+                            Toast.makeText(getContext(), "Profil berhasil diperbarui, silahkan login ulang", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getActivity(), LoginActivity.class);
+                            startActivity(intent);
+                        } else if (status != null && status.equals("1")) {
+                            Toast.makeText(getContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
 
-                    ProfilFragment profilFragment = new ProfilFragment();
-                    profilFragment.setArguments(updatedProfileData);
+                            Bundle updatedProfileData = new Bundle();
+                            updatedProfileData.putString("nama", namaBaru);
+                            updatedProfileData.putString("rt", rtRwBaru);
+                            updatedProfileData.putString("no", noRumahBaru);
 
-                    // Ganti fragment kembali ke ProfilFragment
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, profilFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                            ProfilFragment profilFragment = new ProfilFragment();
+                            profilFragment.setArguments(updatedProfileData);
+
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.fragment_container, profilFragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }  else {
+                            Toast.makeText(getContext(), "gagal memperbarui profil", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 } else {
-                    // Terjadi kesalahan, Anda dapat menampilkan pesan kesalahan
+                    // Gagal memperbarui profil, tampilkan pesan kesalahan
                     Toast.makeText(getContext(), "Gagal memperbarui profil", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                // Terjadi kesalahan jaringan, Anda dapat menampilkan pesan kesalahan
+                // Gagal terhubung ke server, tampilkan pesan kesalahan jaringan
                 Toast.makeText(getContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    private boolean isValidRtRwFormat(String rt){
+        // Format yang diinginkan adalah "00/00"
+        String regexPattern = "\\d{2}/\\d{2}";
+        return rt.matches(regexPattern);
+    }
+
+    private boolean isValidNoFormat(String rt){
+        // Format yang diinginkan adalah "00/00"
+        String regexPattern = "\\d{2}";
+        return rt.matches(regexPattern);
+    }
+
+//    private void checkIfNameExists(String namaBaru, String nikUser, String rtRwBaru, String noRumahBaru) {
+//        RetrofitEndPoint retrofitEndPoint = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
+//        Call<NameCheckResponse> call = retrofitEndPoint.checkIfNameExists(namaBaru);
+//
+//        call.enqueue(new Callback<NameCheckResponse>() {
+//            @Override
+//            public void onResponse(Call<NameCheckResponse> call, Response<NameCheckResponse> response) {
+//                if (response.isSuccessful()) {
+//                    NameCheckResponse nameCheckResponse = response.body();
+//                    if (nameCheckResponse != null && nameCheckResponse.isNameExists()) {
+//                        // Nama sudah terdaftar, tampilkan Toast
+//                        Toast.makeText(getContext(), "Nama sudah terdaftar", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        // Nama belum terdaftar, tampilkan dialog konfirmasi
+//                        showConfirmationDialog(nikUser, namaBaru, rtRwBaru, noRumahBaru);
+//                    }
+//                } else {
+//                    // Kesalahan dalam respons, tampilkan pesan kesalahan
+//                    Toast.makeText(getContext(), "Terjadi kesalahan saat memeriksa nama", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<NameCheckResponse> call, Throwable t) {
+//                // Gagal terhubung ke server, tampilkan pesan kesalahan jaringan
+//                Toast.makeText(getContext(), "Gagal terhubung ke server", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+    // Method untuk menampilkan dialog konfirmasi
+    private void showConfirmationDialog(String nikUser, String namaBaru, String rtRwBaru, String noRumahBaru) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Ubah profil")
+                .setMessage("Apakah Anda yakin ingin mengubah profil?")
+                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Lakukan pembaruan profil dengan menggunakan Retrofit
+                        updateProfile(nikUser, namaBaru, rtRwBaru, noRumahBaru);
+
+                    }
+                })
+                .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    private boolean isValidRwLimit(String rt_rw) {
+        // Mendapatkan nilai RW dari input
+        String[] rwSplit = rt_rw.split("/");
+        int rw = Integer.parseInt(rwSplit[1]);
+
+        // Batasan RW tidak lebih dari 06
+        return rw <= 6;
+    }
+
+    // Tambahkan method untuk memvalidasi RT sesuai dengan RW
+    private boolean isValidRtForRw(String rt_rw) {
+        // Mendapatkan nilai RW dari input
+        String[] rwSplit = rt_rw.split("/");
+        int rw = Integer.parseInt(rwSplit[1]);
+
+        // Mendapatkan nilai RT dari input
+        int rt = Integer.parseInt(rwSplit[0]);
+
+        // Logika untuk menyesuaikan jumlah RT untuk setiap RW
+        // Misalnya, jika RW 01, hanya menerima RT 01-10, jika RW 02, hanya menerima RT 01-08, dan seterusnya
+
+        // Contoh logika validasi untuk setiap RW
+        switch (rw) {
+            case 1:
+                return rt >= 1 && rt <= 7;
+            case 2:
+                return rt >= 1 && rt <= 9;
+            case 3:
+                return rt >= 1 && rt <= 13;
+            case 4:
+                return rt >= 1 && rt <= 4;
+            case 5:
+                return rt >= 1 && rt <= 8;
+            case 6:
+                return rt >= 1 && rt <= 9;
+            default:
+                return false; // Untuk RW yang tidak diatur, dianggap tidak valid
+        }
+    }
+
+
+
 }

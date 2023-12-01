@@ -133,30 +133,28 @@ public class LupaActivity extends AppCompatActivity {
         String nama = edtNama.getText().toString().toLowerCase();
         String newPassword = edtPass.getText().toString();
         String confirmPassword = edtPassKon.getText().toString();
+        int panjangPass = newPassword.length();
 
         if (nik.isEmpty() || nama.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "Harap isi semua kolom", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (!newPassword.equals(confirmPassword)) {
             Toast.makeText(this, "Kata sandi baru dan konfirmasi kata sandi tidak cocok", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (nik.length()<16 || nik.length()>16){
             Toast.makeText(this, "panjang NIK tidak sesuai", Toast.LENGTH_SHORT).show();
             return;
+        }else if (panjangPass<8) {
+            Toast.makeText(this,"panjang sandi minimal 8 karakter",Toast.LENGTH_SHORT).show();
+            return;
         }
-
-        // Panggil fungsi untuk melakukan reset sandi di sini, sesuai dengan logika Anda
         performPasswordReset(nik, nama, newPassword);
     }
 
     private void performPasswordReset(String nik, String nama, String newPassword) {
         RetrofitEndPoint layananApi = RetrofitClient.getConnection().create(RetrofitEndPoint.class);
-
-        // Ganti dengan endpoint yang sesuai untuk reset kata sandi
         Call<PasswordResetResponse> panggilan = layananApi.resetPassword(nik, nama, newPassword);
 
         panggilan.enqueue(new Callback<PasswordResetResponse>() {

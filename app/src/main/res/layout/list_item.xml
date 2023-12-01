@@ -6,13 +6,22 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_marginTop="15dp"
+        android:id="@+id/tanggalLaporanTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tanggal Laporan: "
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#000"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
         android:id="@+id/idTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ID laporan: "
-        android:textSize="16sp"
-        android:textColor="#000000" />
+        android:textSize="14sp"
+        android:textColor="#808080" />
 
     <TextView
         android:id="@+id/nikUserTextView"
@@ -22,13 +31,7 @@
         android:textSize="14sp"
         android:textColor="#808080" />
 
-    <TextView
-        android:id="@+id/tanggalLaporanTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tanggal Laporan: "
-        android:textSize="14sp"
-        android:textColor="#808080" />
+
 
     <TextView
         android:id="@+id/statusTextView"
@@ -42,22 +45,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tanggal Pemantauan: "
-        android:textSize="14sp"
-        android:textColor="#808080" />
+        android:textSize="1sp"
+        android:textColor="@color/transparan" />
 
     <TextView
         android:id="@+id/deskripsiTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Deskripsi: "
-        android:textSize="14sp"
-        android:textColor="#808080" />
+        android:textSize="1sp"
+        android:textColor="@color/transparan" />
     <TextView
         android:id="@+id/urlTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="url: "
-        android:textSize="14sp"
-        android:textColor="@color/white" />
+        android:textSize="10sp"
+        android:textColor="@color/transparan" />
 
 </LinearLayout>

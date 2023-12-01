@@ -47,10 +47,11 @@
 
     <androidx.cardview.widget.CardView
         android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
+        android:layout_width="380dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/biru"
-        app:cardCornerRadius="15dp">
+        app:cardCornerRadius="15dp"
+        android:layout_gravity="center">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -106,26 +107,26 @@
     <Button
         android:id="@+id/btnHapusLapor"
         android:layout_marginTop="25dp"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="50dp"
         android:text="Hapus"
         android:backgroundTint="@color/merah"
         android:layout_gravity="right"
-        android:layout_marginRight="15dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginBottom="10dp"
         android:textSize="13dp"/>
 
                 <Button
                     android:id="@+id/btnKembaliLapor"
                     android:layout_marginTop="25dp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="120dp"
                     android:layout_height="50dp"
                     android:text="Kembali"
                     android:backgroundTint="@color/merah"
                     android:layout_gravity="right"
-                    android:layout_marginLeft="198dp"
+                    android:layout_marginLeft="105dp"
                     android:layout_marginBottom="10dp"
-                    android:textSize="13dp"/>
+                    android:textSize="13dp" />
 
             </LinearLayout>
 

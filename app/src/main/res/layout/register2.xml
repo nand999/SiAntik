@@ -66,7 +66,9 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"
                     android:id="@+id/EditTextNama"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:inputType="textPersonName"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "/>
 
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -80,7 +82,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="RT/RW"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:digits="1234567890/"/>
 
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -94,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:hint="No. Rumah"
                     android:inputType="number"
-                    android:digits="0123456789."
+                    android:digits="0123456789"
                     android:singleLine="true"/>
                 <ImageButton
                     android:id="@+id/btn_eyeReg"

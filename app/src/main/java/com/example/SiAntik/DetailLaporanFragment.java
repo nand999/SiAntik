@@ -1,5 +1,7 @@
 package com.example.SiAntik;
 
+import static com.example.SiAntik.RetrofitClient.BASE_URL;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -22,6 +24,8 @@ import java.util.Calendar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import com.example.SiAntik.RetrofitClient;
 
 public class DetailLaporanFragment extends Fragment {
 
@@ -54,8 +58,21 @@ public class DetailLaporanFragment extends Fragment {
         hapus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (cekBulanSekarang()){
-                    hapusLaporan(idLaporan);
+                if (cekBulanSekarang()) {
+                    new AlertDialog.Builder(getContext()) // Menggunakan konteks fragment
+                            .setTitle("Hapus laporan")
+                            .setMessage("Apakah Anda yakin ingin menghapus laporan?")
+                            .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    hapusLaporan(idLaporan); // Panggil fungsi hapusLaporan dengan idLaporan yang sesuai
+                                }
+                            })
+                            .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
                 }
             }
         });
@@ -96,7 +113,11 @@ public class DetailLaporanFragment extends Fragment {
             // ...
             if (TextUtils.isEmpty(deskripsi)) {
                 txtDes.setText("Deskripsi: Tidak ada deskripsi");
-            } if (TextUtils.isEmpty(tanggalPemantauan)) {
+            }else {
+                txtDes.setText("Deskripsi: " + deskripsi);
+            }
+
+            if (TextUtils.isEmpty(tanggalPemantauan)) {
                 txtPem.setText("Tanggal Pemantauan: Laporan belum dikonfirmasi");
             } if ("0".equals(status)) {
                 txtStat.setText("Status: negatif jentik");
@@ -106,8 +127,9 @@ public class DetailLaporanFragment extends Fragment {
                 txtStat.setText("Status: belum dikonfirmasi");
             }
 
-
-            String urlFoto = "http://172.17.202.21:8080/siantik/mobile/" + foto;
+            String BASE_URL = RetrofitClient.BASE_URL;
+//            String urlFoto = "http://192.168.137.1:8080/siantik/mobile/" + foto;
+            String urlFoto = BASE_URL + foto;
 
 
             // Menampilkan gambar (foto) menggunakan Picasso

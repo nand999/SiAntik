@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements OnReturnToBeranda
         }
        bottomMenu();
 
+//        MyReceiver.triggerNotification(this);
+
+
 
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);

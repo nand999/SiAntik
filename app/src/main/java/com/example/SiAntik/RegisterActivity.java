@@ -66,6 +66,9 @@ public class RegisterActivity extends AppCompatActivity {
                 } else if (panjangNIK<16 || panjangNIK > 16){
                     Toast.makeText(RegisterActivity.this,"panjang NIK tidak sesuai",Toast.LENGTH_SHORT).show();
                     return;
+                }else if ( panjangNIK > 16){
+                    Toast.makeText(RegisterActivity.this,"panjang NIK tidak sesuai",Toast.LENGTH_SHORT).show();
+                    return;
                 } else if (panjangPass<8) {
                     Toast.makeText(RegisterActivity.this,"panjang sandi minimal 8 karakter",Toast.LENGTH_SHORT).show();
                     return;
@@ -78,9 +81,25 @@ public class RegisterActivity extends AppCompatActivity {
                 } else if (!isValidRtRwFormat(rt_rw)) {
                     Toast.makeText(RegisterActivity.this, "Format RT/RW harus 00/00", Toast.LENGTH_SHORT).show();
                     return; // Berhenti dari metode jika format RT/RW tidak valid
-                }else if (!isValidNoFormat(no_rumah)) {
+                } else if (!isValidNoFormat(no_rumah)) {
                     Toast.makeText(RegisterActivity.this, "Format No Rumah harus 00", Toast.LENGTH_SHORT).show();
                     return; // Berhenti dari metode jika format RT/RW tidak valid
+                } else if (edtNama.getText().toString().substring(0,1).contains(" ")){
+                    Toast.makeText(RegisterActivity.this, "Tidak boleh ada spasi diawal dan diakhir nama", Toast.LENGTH_SHORT).show();
+                } else if ((edtNama.getText().toString().substring((edtNama.getText().length() -1),(edtNama.getText().toString().length())).contains(" "))) {
+                    Toast.makeText(RegisterActivity.this, "Tidak boleh ada spasi diawal dan diakhir nama", Toast.LENGTH_SHORT).show();
+                } else if (edtId.getText().toString().substring(0,1).contains(" ")){
+                    Toast.makeText(RegisterActivity.this, "Tidak boleh ada spasi diawal dan diakhir NIK", Toast.LENGTH_SHORT).show();
+                } else if ((edtId.getText().toString().substring((edtId.getText().length() -1),(edtId.getText().toString().length())).contains(" "))) {
+                    Toast.makeText(RegisterActivity.this, "Tidak boleh ada spasi diawal dan diakhir NIK", Toast.LENGTH_SHORT).show();
+                } else if (edtId.getText().toString().contains(" ")) {
+                    Toast.makeText(RegisterActivity.this, "Tidak boleh ada spasi diawal dan diakhir NIK", Toast.LENGTH_SHORT).show();
+                }  else if (!isValidRwLimit(rt_rw)) {
+                    Toast.makeText(RegisterActivity.this, "RW hanya sampai RW 06", Toast.LENGTH_SHORT).show();
+                    return; // Berhenti dari metode jika RW tidak sesuai batasan
+                } else if (!isValidRtForRw(rt_rw)) {
+                    Toast.makeText(RegisterActivity.this, "RT tidak sesuai dengan RW", Toast.LENGTH_SHORT).show();
+                    return; // Berhenti dari metode jika RT tidak sesuai dengan RW
                 } else {
                     daftarPengguna();
                 }
@@ -178,12 +197,6 @@ public class RegisterActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
-
-
-
-
     }
 
 
@@ -227,9 +240,12 @@ public class RegisterActivity extends AppCompatActivity {
                                 // Lakukan sesuatu dengan data pengguna yang berhasil diregistrasi
                             }
 
-                        } else if ("ada".equals(status)) {
+                        } else if ("ada0".equals(status)) {
                             Toast.makeText(RegisterActivity.this,"NIK telah terdaftar", Toast.LENGTH_SHORT).show();
                             
+                        } else if ("ada1".equals(status)) {
+                            Toast.makeText(RegisterActivity.this,"Nama telah terdaftar", Toast.LENGTH_SHORT).show();
+
                         } else {
                             // Registrasi gagal, tangani pesan kesalahan jika diperlukan
                             Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -251,15 +267,55 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Metode untuk memeriksa format RT/RW
     private boolean isValidRtRwFormat(String rt){
-        // Format yang diinginkan adalah "00/00"
+        // Format yang diinginkan adalah "00/00 / "RT/RW"
         String regexPattern = "\\d{2}/\\d{2}";
         return rt.matches(regexPattern);
     }
 
     private boolean isValidNoFormat(String rt){
-        // Format yang diinginkan adalah "00/00"
+        // Format yang diinginkan adalah "00/00" / "RT/RW"
         String regexPattern = "\\d{2}";
         return rt.matches(regexPattern);
+    }
+
+    private boolean isValidRwLimit(String rt_rw) {
+        // Mendapatkan nilai RW dari input
+        String[] rwSplit = rt_rw.split("/");
+        int rw = Integer.parseInt(rwSplit[1]);
+
+        // Batasan RW tidak lebih dari 06
+        return rw <= 6;
+    }
+
+    // Tambahkan method untuk memvalidasi RT sesuai dengan RW
+    private boolean isValidRtForRw(String rt_rw) {
+        // Mendapatkan nilai RW dari input
+        String[] rwSplit = rt_rw.split("/");
+        int rw = Integer.parseInt(rwSplit[1]);
+
+        // Mendapatkan nilai RT dari input
+        int rt = Integer.parseInt(rwSplit[0]);
+
+        // Logika untuk menyesuaikan jumlah RT untuk setiap RW
+        // Misalnya, jika RW 01, hanya menerima RT 01-10, jika RW 02, hanya menerima RT 01-08, dan seterusnya
+
+        // Contoh logika validasi untuk setiap RW
+        switch (rw) {
+            case 1:
+                return rt >= 1 && rt <= 7;
+            case 2:
+                return rt >= 1 && rt <= 9;
+            case 3:
+                return rt >= 1 && rt <= 13;
+            case 4:
+                return rt >= 1 && rt <= 4;
+            case 5:
+                return rt >= 1 && rt <= 8;
+            case 6:
+                return rt >= 1 && rt <= 9;
+            default:
+                return false; // Untuk RW yang tidak diatur, dianggap tidak valid
+        }
     }
 
 

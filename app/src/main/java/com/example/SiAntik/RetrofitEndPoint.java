@@ -7,6 +7,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RetrofitEndPoint {
@@ -28,7 +29,7 @@ public interface RetrofitEndPoint {
     );
 
     @FormUrlEncoded
-    @POST("lupaSandiUser.php")
+    @POST("lupaSandiUser1.php")
     Call<PasswordResetResponse> resetPassword(
             @Field("nik_user") String nikUser,
             @Field("nama_user") String namaUser,
@@ -50,11 +51,9 @@ public interface RetrofitEndPoint {
     );
 
 
-    @GET("getNIK.php")
-    Call<NIKResponse> getNIK(@Query("nama_user") String nama_user);
 
     @FormUrlEncoded
-    @POST("updateProfile.php")
+    @POST("updateProfil1.php")
     Call<UserResponse> updateProfile(
             @Field("nik_user") String nik_user,
             @Field("nama_user") String nama_user,
@@ -73,16 +72,16 @@ public interface RetrofitEndPoint {
     Call<List<LaporanData>> getLaporanData(
             @Field("nik_user") String nik_user);
 
-    @FormUrlEncoded
-    @POST("getDetailLaporan.php")
-    Call<List<LaporanData>> getDetailLaporan(
-            @Field("id_laporan") String id_laporan);
 
     @FormUrlEncoded
     @POST("hapusLaporan.php")
     Call<LaporanResponse> hapusLaporan(
             @Field("id_laporan") String id_laporan
     );
+
+    @GET("cekNama.php")
+    Call<NameCheckResponse> checkIfNameExists(@Query("nama_user") String nama);
+
 }
 
 

@@ -3,6 +3,7 @@ package com.example.SiAntik;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -79,6 +80,7 @@ public class LaporFragment extends Fragment {
     private static final int SELECT_FILE = 2;
     private static final int REQUEST_CAMERA_PERMISSION = 101;
     private static final int REQUEST_READ_EXTERNAL_STORAGE_PERMISSION = 102;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 103;
 
     private ImageButton btnSelectImage;
     private ImageView imageView;
@@ -111,8 +113,10 @@ public class LaporFragment extends Fragment {
     private static final int IMAGE_WIDTH = 960; // Lebar gambar yang lebih tinggi
     private static final int IMAGE_HEIGHT = 1280; // Ganti dengan tinggi yang Anda inginkan
     private static final int IMAGE_QUALITY = 100; // Kualitas gambar (0-100)
-    private Uri imageFileUri;
-
+    private Uri photoURI;
+    private Uri imageUri;
+    private ContentValues values;
+    private Bitmap thumbnail;
 
 
 
@@ -186,22 +190,38 @@ public class LaporFragment extends Fragment {
             }
         });
 
+
+
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 GetImageNameFromEditText = edtDes.getText().toString();
                 if (FixBitmap != null) {
-                    UploadImageToServer();
-                    clearSemua();
-                    alertSudah();
+
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Kirim Laporan")
+                            .setMessage("Apakah Anda yakin laporan sudah benar?")
+                            .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    UploadImageToServer();
+                                    clearSemua();
+                                    alertSudah();
+                                }
+                            })
+                            .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
                 } else {
                     Toast.makeText(getContext(), "Pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
         return rootView;
     }
+
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getContext());
         pictureDialog.setTitle("Select Action");
@@ -230,6 +250,21 @@ public class LaporFragment extends Fragment {
         startActivityForResult(galleryIntent, GALLERY);
     }
 
+    private void takePhotoFromCamera() {
+        imageType = CAMERA;
+
+        values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+        imageUri = getActivity().getContentResolver().insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+//        startActivityForResult(intent, REQUEST_CAMERA);
+        startActivityForResult(intent, CAMERA);
+    }
+
 
 
 //    private File createImageFile() {
@@ -247,44 +282,116 @@ public class LaporFragment extends Fragment {
 //        return image;
 //    }
 
+                        //LAMA
+//    private void takePhotoFromCamera() {
+//        imageType = CAMERA;
+//        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//        startActivityForResult(intent, CAMERA);
+//    }
 
 
-    private void takePhotoFromCamera() {
-        imageType = CAMERA;
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, CAMERA);
-    }
 
 
 
-private Bitmap handleCapturedImage(Intent data) {
-    byteArrayOutputStream = new ByteArrayOutputStream();
-    if (data == null || data.getExtras() == null || !data.getExtras().containsKey("data")) {
-        // Handling jika data dari pengambilan gambar tidak valid
-        Toast.makeText(getContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT).show();
-        return null;
-    }
-
-    FixBitmap = (Bitmap) data.getExtras().get("data");
-
-    BitmapFactory.Options options = new BitmapFactory.Options();
-    options.inSampleSize = calculateInSampleSize(IMAGE_WIDTH, IMAGE_HEIGHT, FixBitmap.getWidth(), FixBitmap.getHeight());
-    Bitmap scaledBitmap = Bitmap.createScaledBitmap(FixBitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
-
-//    // Simpan gambar ke berkas
-//    File imageFile = createImageFile();
-//    if (imageFile != null) {
-//        try (FileOutputStream out = new FileOutputStream(imageFile)) {
-//            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, out);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Toast.makeText(getContext(), "Failed to create image file.", Toast.LENGTH_SHORT).show();
-//            return null;
+//    private void takePhotoFromCamera() {
+//        // Check for runtime permissions
+//        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Request permission if it is not granted
+//            ActivityCompat.requestPermissions(getActivity(),
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION);
+//        } else {
+//            // Proceed with taking a photo
+//            startCameraIntent();
 //        }
 //    }
 
-    return scaledBitmap; // Mengembalikan gambar yang telah diubah (scaledBitmap) yang seharusnya disimpan.
-}
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Permission granted, proceed with taking a photo
+//                startCameraIntent();
+//            } else {
+//                // Permission denied, show a message or handle accordingly
+//                Toast.makeText(getContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
+
+    private void startCameraIntent() {
+        if (imageUri != null) {
+            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, CAMERA);
+        } else {
+            Toast.makeText(getContext(), "Failed to start camera", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
+            //LAMA
+//private Bitmap handleCapturedImage(Intent data) {
+//    byteArrayOutputStream = new ByteArrayOutputStream();
+//    if (data == null || data.getExtras() == null || !data.getExtras().containsKey("data")) {
+//        // Handling jika data dari pengambilan gambar tidak valid
+//        Toast.makeText(getContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT).show();
+//        return null;
+//    }
+//
+//    FixBitmap = (Bitmap) data.getExtras().get("data");
+//
+//    BitmapFactory.Options options = new BitmapFactory.Options();
+//    options.inSampleSize = calculateInSampleSize(IMAGE_WIDTH, IMAGE_HEIGHT, FixBitmap.getWidth(), FixBitmap.getHeight());
+//    Bitmap scaledBitmap = Bitmap.createScaledBitmap(FixBitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+//
+////    // Simpan gambar ke berkas
+////    File imageFile = createImageFile();
+////    if (imageFile != null) {
+////        try (FileOutputStream out = new FileOutputStream(imageFile)) {
+////            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, out);
+////        } catch (IOException e) {
+////            e.printStackTrace();
+////            Toast.makeText(getContext(), "Failed to create image file.", Toast.LENGTH_SHORT).show();
+////            return null;
+////        }
+////    }
+//
+//    return scaledBitmap; // Mengembalikan gambar yang telah diubah (scaledBitmap) yang seharusnya disimpan.
+//}
+
+    private Bitmap handleCapturedImage(Intent data) {
+        byteArrayOutputStream = new ByteArrayOutputStream();
+        if (imageUri == null) {
+            // Handling jika URI gambar tidak valid
+            Toast.makeText(getContext(), "Failed to get image URI", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        try {
+            thumbnail = MediaStore.Images.Media.getBitmap(
+                    getActivity().getContentResolver(), imageUri);
+
+            // Resize image if needed
+            thumbnail = Bitmap.createScaledBitmap(thumbnail, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+
+            // Set the scaled bitmap to your FixBitmap variable
+            FixBitmap = thumbnail;
+
+            return FixBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Failed to handle captured image", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
+
+
 
 
 
@@ -301,6 +408,50 @@ private Bitmap handleCapturedImage(Intent data) {
         return inSampleSize;
     }
 
+            //LAMA
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == Activity.RESULT_CANCELED) {
+//            return;
+//        }
+//        if (requestCode == GALLERY) {
+//            if (data != null) {
+//                Uri contentURI = data.getData();
+//                try {
+//                    FixBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), contentURI);
+//                    imageView.setImageBitmap(FixBitmap);
+////                    btnSelectImage.setImageBitmap(FixBitmap);
+//                    btnSend.setVisibility(View.VISIBLE);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    Toast.makeText(getContext(), "Gagal!", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        }  else if (requestCode == CAMERA) {
+//            FixBitmap = handleCapturedImage(data);
+//            if (FixBitmap != null) {
+//                imageView.setImageBitmap(FixBitmap);
+////                btnSelectImage.setImageBitmap(FixBitmap);
+//                btnSend.setVisibility(View.VISIBLE);
+//            }
+//        }
+//    }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == Activity.RESULT_CANCELED) {
+//            return;
+//        }
+//        if (requestCode == REQUEST_CAMERA) {
+//            FixBitmap = handleCapturedImage(data);
+//            if (FixBitmap != null) {
+//                imageView.setImageBitmap(FixBitmap);
+//                btnSend.setVisibility(View.VISIBLE);
+//            }
+//        }
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -308,28 +459,31 @@ private Bitmap handleCapturedImage(Intent data) {
         if (resultCode == Activity.RESULT_CANCELED) {
             return;
         }
-        if (requestCode == GALLERY) {
-            if (data != null) {
-                Uri contentURI = data.getData();
-                try {
-                    FixBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), contentURI);
-                    imageView.setImageBitmap(FixBitmap);
-//                    btnSelectImage.setImageBitmap(FixBitmap);
-                    btnSend.setVisibility(View.VISIBLE);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Gagal!", Toast.LENGTH_SHORT).show();
-                }
+        if (requestCode == GALLERY && data != null) {
+            // Handle image from gallery
+            Uri contentURI = data.getData();
+            try {
+                FixBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), contentURI);
+                imageView.setImageBitmap(FixBitmap);
+                btnSend.setVisibility(View.VISIBLE);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Gagal!", Toast.LENGTH_SHORT).show();
             }
-        }  else if (requestCode == CAMERA) {
+        } else if (requestCode == CAMERA && resultCode == Activity.RESULT_OK) {
+            // Handle image from camera
             FixBitmap = handleCapturedImage(data);
             if (FixBitmap != null) {
                 imageView.setImageBitmap(FixBitmap);
-//                btnSelectImage.setImageBitmap(FixBitmap);
                 btnSend.setVisibility(View.VISIBLE);
             }
         }
     }
+
+
+
+
+
 
 
     public void UploadImageToServer() {
@@ -397,7 +551,10 @@ private Bitmap handleCapturedImage(Intent data) {
                     HashMapParams.put(Deskripsi, deskripsi);
                     HashMapParams.put("nik_user", nik_user);
 
-                    return imageProcessClass.ImageHttpRequest("http://172.17.202.21:8080/siantik/mobile/upGambar.php", HashMapParams);
+                    String BASE_URL = RetrofitClient.BASE_URL;
+
+//                    return imageProcessClass.ImageHttpRequest("http://192.168.137.1:8080/siantik/mobile/upGambar.php", HashMapParams);
+                    return imageProcessClass.ImageHttpRequest(BASE_URL + "upGambar.php", HashMapParams);
                 }
             }
 

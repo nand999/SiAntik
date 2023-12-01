@@ -2,21 +2,17 @@ package com.example.SiAntik;
 
 import static com.example.SiAntik.RetrofitClient.BASE_URL;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +28,9 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -45,15 +39,14 @@ import com.github.mikephil.charting.data.BarEntry;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class BerandaFragment extends Fragment {
 
-    private boolean isLaporFragmentDisabled = false; // Menandai apakah Fragment Lapor telah dinonaktifkan
+    private boolean isLaporFragmentDisabled = false;
 
     private ImageView imageView;
     private Handler handler;
+    TextView statusView;
     private static final long REFRESH_INTERVAL = 10000;
 
     public BerandaFragment() {
@@ -99,6 +92,7 @@ public class BerandaFragment extends Fragment {
 
         TextView nama = view.findViewById(R.id.txt_nama);
         imageView = view.findViewById(R.id.imageBeranda);
+        statusView = view.findViewById(R.id.edtStatusBeranda);
 
 
         Bundle extras = getActivity().getIntent().getExtras();
@@ -116,6 +110,7 @@ public class BerandaFragment extends Fragment {
                 // Refresh the charts
                 setUpPieChart(pieChart);
                 getDataAndSetUpMonthlyStatus1BarChart(barChart1);
+                checkLaporanStatus();
 
                 // Schedule the next refresh
                 handler.postDelayed(this, REFRESH_INTERVAL);
@@ -207,48 +202,6 @@ public class BerandaFragment extends Fragment {
         pieChart.animateY(1000);
     }
 
-
-
-//    private void setUpPieChart(PieChart pieChart){
-//        // Inisialisasi data untuk pie chart
-//        PieDataSet pieDataSet = new PieDataSet(getPieChartData(), " ");
-//        pieDataSet.setColors(new int[]{Color.RED, Color.BLUE,Color.GRAY});
-//
-//        PieData pieData = new PieData(pieDataSet);
-//        pieChart.setData(pieData);
-//
-//        // Konfigurasi lainnya
-//        pieChart.getDescription().setEnabled(false);
-//        pieChart.setHoleRadius(30f);
-//        pieChart.setTransparentCircleRadius(35f);
-//
-//        pieChart.animateY(1000, Easing.EaseInOutCubic);
-//    }
-
-//    private ArrayList<PieEntry> getPieChartData() {
-//        ArrayList<PieEntry> entries = new ArrayList<>();
-//        entries.add(new PieEntry(40f, "Positif"));
-//        entries.add(new PieEntry(30f, "Negatif"));
-//        entries.add(new PieEntry(20f, "Belum Terkonfirmasi"));
-//        return entries;
-//    }
-
-//    private void setUpBarChart(BarChart barChart){
-//        // Inisialisasi data untuk bar chart
-//        BarDataSet barDataSet = new BarDataSet(getBarChartData(), "Data Set");
-//        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-//
-//        BarData barData = new BarData(barDataSet);
-//        barChart.setData(barData);
-//
-//        // Konfigurasi lainnya
-//        barChart.getDescription().setEnabled(false);
-//
-//        barChart.animateY(1000, Easing.EaseInOutCubic);
-//    }
-
-
-
     private void getDataAndSetUpMonthlyStatus1BarChart(final BarChart barChart) {
         barChart.getDescription().setEnabled(false);
         final ArrayList<BarEntry> entries = new ArrayList<>();
@@ -286,10 +239,6 @@ public class BerandaFragment extends Fragment {
                     barData.setValueFormatter(new IntegerValueFormatter());
                     barChart.setData(barData);
 //                    barChart.getAxisLeft().setValueFormatter(new IntegerValueFormatter());
-
-
-
-
 
                     YAxis yAxis = barChart.getAxisLeft();
                     yAxis.setTextSize(12f);
@@ -348,17 +297,22 @@ public class BerandaFragment extends Fragment {
                     if (status.equals("sudah_lapor_positif")) {
                         // Tampilkan gambar "anda sudah lapor"
                         imageView.setImageResource(R.drawable.ic_yes);
+                        statusView.setText("Anda sudah lapor bulan ini, status: Positif jentik");
                         disableLaporFragment();
                     } else if (status.equals("belum_lapor")) {
                         // Tampilkan gambar "anda belum lapor bulan ini"
                         imageView.setImageResource(R.drawable.ic_not);
+                        statusView.setText("Anda belum lapor bulan ini, segera lakukan lapor");
                     } else if(status.equals("error")){
                         imageView.setImageResource(R.drawable.ic_not);
+                        statusView.setText("Tidak dapat mengambil data");
                     } else if (status.equals("sudah_lapor_negatif")) {
                         imageView.setImageResource(R.drawable.ic_seru);
+                        statusView.setText("Anda sudah lapor bulan ini, status: Negatif jentik");
                         disableLaporFragment();
                     } else if (status.equals("sudah_lapor_belum")) {
                         imageView.setImageResource(R.drawable.ic_play);
+                        statusView.setText("Anda sudah lapor bulan ini, status: Belum dikonfirmasi");
                         disableLaporFragment();
                     }
                 } else {

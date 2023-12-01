@@ -69,7 +69,10 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"
                     android:id="@+id/EditTextUsername"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:inputType="textPersonName"
+                    android:digits="abcdefghijklmnopqrstuvwxyz
+                       ABCDEFGHIJKLMNOPQRSTUVWXYZ "/>
                 <ImageButton
                     android:id="@+id/btn_eye"
                     android:layout_width="wrap_content"

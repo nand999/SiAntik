@@ -56,14 +56,19 @@ public class CustomListAdapter extends BaseAdapter {
 
         idTextView.setText("ID laporan: " + laporan.getIdLapor());
         nikUserTextView.setText("NIK User: " + laporan.getNikUser());
-        tanggalLaporanTextView.setText("Tanggal Laporan: " + laporan.getTanggalLaporan());
+        tanggalLaporanTextView.setText("Tanggal Laporan: " + laporan.getTanggalLaporan().substring(0,10));
         url.setText("foto" + laporan.getFoto());
 
         if (TextUtils.isEmpty(laporan.getDeskripsi())) {
             des.setText("Deskripsi: Tidak ada deskripsi");
+        }else {
+            des.setText("Deskripsi: " + laporan.getDeskripsi());
         }
+
         if (TextUtils.isEmpty(laporan.getTanggalPemantauan())) {
             tglPem.setText("Tanggal Pemantauan: Laporan belum dikonfirmasi");
+        }else{
+            tglPem.setText("Tanggal Pemantauan: " + laporan.getTanggalPemantauan());
         }
 
 

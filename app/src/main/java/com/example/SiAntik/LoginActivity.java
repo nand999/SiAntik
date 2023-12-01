@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.SiAntik.cadangan.ApiClient;
 import com.example.SiAntik.cadangan.ApiService;
-import com.example.SiAntik.cadangan.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -83,6 +81,10 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (etPassword.getText().length()<8){
                     Toast.makeText(LoginActivity.this, "Panjang sandi minimal 8 karakter", Toast.LENGTH_SHORT).show();
                     return;
+                }  else if (username.getText().toString().substring(0,1).contains(" ")){
+                    Toast.makeText(LoginActivity.this, "Tidak boleh ada spasi diawal atau diakhir nama", Toast.LENGTH_SHORT).show();
+                } else if ((username.getText().toString().substring((username.getText().length() -1),(username.getText().toString().length())).contains(" "))) {
+                    Toast.makeText(LoginActivity.this, "Tidak boleh ada spasi diawal atau diakhir nama", Toast.LENGTH_SHORT).show();
                 } else {loginUser1();}
             }
         });
@@ -168,6 +170,8 @@ public class LoginActivity extends AppCompatActivity {
                         // Simpan juga username yang dimasukkan pengguna
                         editor.putString("LAST_USERNAME", username.getText().toString());
                         editor.apply();
+
+                        Toast.makeText(LoginActivity.this, "Berhasil login, selamat datang " + nama, Toast.LENGTH_SHORT).show();
 
                         // Sekarang, Anda dapat menggunakannya sesuai kebutuhan
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);

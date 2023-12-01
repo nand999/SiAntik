@@ -16,17 +16,10 @@ import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 public class RetrofitClient {
-//    public static final String BASE_URL = "http://localhost:8080/test_siantik/mobile/";
 
-    public static final String BASE_URL = "http://172.17.202.21:8080/siantik/mobile/";
+//    public static final String BASE_URL = "http://192.168.137.1:8080/siantik/mobile/";
 
-//   public static final String BASE_URL = "http://172.16.106.117:8080/test_siantik/mobile/"; //work
-
-//    public static final String BASE_URL = "http://172.16.103.252/test_siantik/"; // local
-
-//    public static final String BASE_URL = "http://172.16.106.67/arenafinder-web/"; // wifi
-
-//    public static final String CONTROLLERS = BASE_URL + "mobile/";
+    public static final String BASE_URL = "https://si-antik.tifnganjuk.com/SI-antik/mobile/";
 
     public static final String USER_PHOTO_URL = BASE_URL + "public/img/user-photo/";
 

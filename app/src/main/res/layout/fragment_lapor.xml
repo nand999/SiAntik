@@ -37,7 +37,8 @@
             app:boxBackgroundColor="@color/white">
 
             <EditText
-                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_width="380dp"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:hint="Tambah Keterangan (opsional):"
