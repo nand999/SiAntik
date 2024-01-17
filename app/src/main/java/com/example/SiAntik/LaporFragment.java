@@ -78,7 +78,8 @@ public class LaporFragment extends Fragment {
 
     private static final int REQUEST_CAMERA = 1;
     private static final int SELECT_FILE = 2;
-    private static final int REQUEST_CAMERA_PERMISSION = 101;
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
+    private static final int REQUEST_STORAGE_PERMISSION = 101;
     private static final int REQUEST_READ_EXTERNAL_STORAGE_PERMISSION = 102;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 103;
 
@@ -222,7 +223,82 @@ public class LaporFragment extends Fragment {
         return rootView;
     }
 
+//    private void showPictureDialog() {
+//        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getContext());
+//        pictureDialog.setTitle("Select Action");
+//        String[] pictureDialogItems = {
+//                "Ambil Dari Galeri",
+//                "Ambil Foto Dari Kamera"
+//        };
+//        pictureDialog.setItems(pictureDialogItems, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                switch (which) {
+//                    case 0:
+//                        choosePhotoFromGallery();
+//                        break;
+//                    case 1:
+//                        takePhotoFromCamera();
+//                        break;
+//                }
+//            }
+//        });
+//        pictureDialog.show();
+//    }
+
+    public void choosePhotoFromGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, GALLERY);
+    }
+
+    private void takePhotoFromCamera() {
+        imageType = CAMERA;
+
+        values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+        imageUri = getActivity().getContentResolver().insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+//        startActivityForResult(intent, REQUEST_CAMERA);
+        startActivityForResult(intent, CAMERA);
+    }
+
+
+    //gpt baru
+
     private void showPictureDialog() {
+        // Memeriksa apakah izin kamera telah diberikan
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Jika izin belum diberikan, minta izin kamera
+            requestCameraPermission();
+        } else if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestStoragePermission();
+        } else {
+            // Jika izin sudah diberikan, tampilkan dialog pilihan aksi
+            displayPictureDialog();
+        }
+    }
+
+    // Metode untuk meminta izin kamera
+    private void requestCameraPermission() {
+        ActivityCompat.requestPermissions(getActivity(),
+                new String[]{Manifest.permission.CAMERA},
+                REQUEST_CAMERA_PERMISSION);
+    }
+
+    // Metode untuk meminta izin penyimpanan
+    private void requestStoragePermission() {
+        ActivityCompat.requestPermissions(getActivity(),
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                REQUEST_STORAGE_PERMISSION);
+    }
+
+    private void displayPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getContext());
         pictureDialog.setTitle("Select Action");
         String[] pictureDialogItems = {
@@ -245,25 +321,37 @@ public class LaporFragment extends Fragment {
         pictureDialog.show();
     }
 
-    public void choosePhotoFromGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, GALLERY);
+    // Metode untuk menangani hasil permintaan izin
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Izin diberikan, tampilkan dialog pilihan aksi
+                displayPictureDialog();
+            } else {
+                // Izin ditolak, berikan pesan kepada pengguna
+                Toast.makeText(getContext(), "Izin kamera ditolak", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (requestCode == REQUEST_STORAGE_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Izin diberikan, tampilkan dialog pilihan aksi
+                displayPictureDialog();
+            } else {
+                // Izin ditolak, berikan pesan kepada pengguna
+                Toast.makeText(getContext(), "Izin penyimpanan ditolak", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void takePhotoFromCamera() {
-        imageType = CAMERA;
 
-        values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
-        imageUri = getActivity().getContentResolver().insert(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-//        startActivityForResult(intent, REQUEST_CAMERA);
-        startActivityForResult(intent, CAMERA);
-    }
+
+
+    //gpt baru
 
 
 
@@ -475,6 +563,7 @@ public class LaporFragment extends Fragment {
             FixBitmap = handleCapturedImage(data);
             if (FixBitmap != null) {
                 imageView.setImageBitmap(FixBitmap);
+//                btnSelectImage.setImageBitmap(FixBitmap);
                 btnSend.setVisibility(View.VISIBLE);
             }
         }
@@ -485,7 +574,7 @@ public class LaporFragment extends Fragment {
 
 
 
-
+//method upload gambar
     public void UploadImageToServer() {
         byteArrayOutputStream = new ByteArrayOutputStream();
         if (FixBitmap != null) {

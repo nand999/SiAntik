@@ -3,6 +3,8 @@ package com.example.SiAntik;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.*;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -71,6 +73,9 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 } else if (panjangPass<8) {
                     Toast.makeText(RegisterActivity.this,"panjang sandi minimal 8 karakter",Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (panjangPass>12) {
+                    Toast.makeText(RegisterActivity.this,"panjang sandi maksimal 12 karakter",Toast.LENGTH_SHORT).show();
                     return;
                 } else if (pass.contains(" ")) {
                     Toast.makeText(RegisterActivity.this, "Sandi tidak boleh mengandung spasi", Toast.LENGTH_SHORT).show();
@@ -197,7 +202,130 @@ public class RegisterActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        // WARNING EDITEXT
+
+
+        edtId.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (edtId.getText().toString().length()<16){
+                    edtId.setError("Panjang NIK harus 16");
+                } else if (edtId.getText().toString().length()>16) {
+                    edtId.setError("Panjang NIK harus 16");
+                } else{
+                    edtId.setError(null);
+                }
+            }
+        });
+
+
+        edtPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (edtPass.getText().toString().length()<8){
+                    edtPass.setError("Panjang sandi minimal 8 karakter");
+                } else if (edtPass.getText().toString().length()>12) {
+                    edtPass.setError("Panjang sandi maksimal 12 karakter");
+                } else {
+                    edtPass.setError(null);
+                }
+            }
+        });
+
+        edtbRt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (!isValidRtRwFormat(edtbRt.getText().toString())){
+                    edtbRt.setError("Format RT/RW adalah 00/00");
+                } else{
+                    edtbRt.setError(null);
+                }
+            }
+        });
+
+        edtNo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (!isValidNoFormat(edtNo.getText().toString())){
+                    edtNo.setError("Format nomor rumah adalah 00");
+                } else{
+                    edtNo.setError(null);
+                }
+            }
+        });
+
+//        edtPassCon.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                if (edtPassCon.getText().toString() != edtPass.getText().toString()){
+//                    edtPassCon.setError("Sandi dan konfirmasi sandi tidak sesuai");
+//                } else{
+//                    edtPassCon.setError(null);
+//                }
+//            }
+//        });
+
+
+
+
+
+
+
+
     }
+
 
 
 

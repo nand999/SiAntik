@@ -81,7 +81,10 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (etPassword.getText().length()<8){
                     Toast.makeText(LoginActivity.this, "Panjang sandi minimal 8 karakter", Toast.LENGTH_SHORT).show();
                     return;
-                }  else if (username.getText().toString().substring(0,1).contains(" ")){
+                }  else if (etPassword.getText().length()>12){
+                    Toast.makeText(LoginActivity.this, "Panjang sandi maksimal 12 karakter", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (username.getText().toString().substring(0,1).contains(" ")){
                     Toast.makeText(LoginActivity.this, "Tidak boleh ada spasi diawal atau diakhir nama", Toast.LENGTH_SHORT).show();
                 } else if ((username.getText().toString().substring((username.getText().length() -1),(username.getText().toString().length())).contains(" "))) {
                     Toast.makeText(LoginActivity.this, "Tidak boleh ada spasi diawal atau diakhir nama", Toast.LENGTH_SHORT).show();

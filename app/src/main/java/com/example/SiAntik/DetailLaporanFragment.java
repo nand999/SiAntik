@@ -133,7 +133,11 @@ public class DetailLaporanFragment extends Fragment {
 
 
             // Menampilkan gambar (foto) menggunakan Picasso
-            Picasso.get().load(urlFoto).into(fotoImageView);
+            Picasso.get()
+                    .load(urlFoto)
+                    .placeholder(R.drawable.ic_tunggu) // Gambar sementara selama proses loading
+                    .error(R.drawable.ic_error) // Gambar alternatif jika terjadi kesalahan
+                    .into(fotoImageView);
         }
 
         return rootView;

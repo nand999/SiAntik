@@ -3,6 +3,8 @@ package com.example.SiAntik;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.*;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.view.KeyEvent;
 import android.view.View;
@@ -82,6 +84,31 @@ public class LupaActivity extends AppCompatActivity {
             }
         });
 
+
+        edtNik.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (edtNik.getText().toString().length()<16){
+                    edtNik.setError("Panjang NIK harus 16");
+                } else if (edtNik.getText().toString().length()>16) {
+                    edtNik.setError("Panjang NIK harus 16");
+                } else{
+                    edtNik.setError(null);
+                }
+            }
+        });
+
+
         edtNama.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -148,6 +175,9 @@ public class LupaActivity extends AppCompatActivity {
             return;
         }else if (panjangPass<8) {
             Toast.makeText(this,"panjang sandi minimal 8 karakter",Toast.LENGTH_SHORT).show();
+            return;
+        }else if (panjangPass>12) {
+            Toast.makeText(this,"panjang sandi maksimal 12 karakter",Toast.LENGTH_SHORT).show();
             return;
         }
         performPasswordReset(nik, nama, newPassword);

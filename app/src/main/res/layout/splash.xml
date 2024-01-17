@@ -42,7 +42,7 @@
         android:layout_below="@id/typingTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="125dp"
-        android:text="Developer by Kelompok B4"
+        android:text="Tim pengembang 4B"
         android:textColor="#929293"
         android:textSize="14sp" />
 

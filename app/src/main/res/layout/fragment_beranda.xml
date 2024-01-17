@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/txt_selamat"
             android:layout_marginTop="20dp"
             android:layout_gravity="center"
             android:gravity="left"
@@ -71,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/biru"
-                app:cardCornerRadius="30dp">
+                app:cardCornerRadius="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -40,6 +40,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class BerandaFragment extends Fragment {
 
     private boolean isLaporFragmentDisabled = false;
@@ -47,6 +51,7 @@ public class BerandaFragment extends Fragment {
     private ImageView imageView;
     private Handler handler;
     TextView statusView;
+    private TextView txtSelamat;
     private static final long REFRESH_INTERVAL = 10000;
 
     public BerandaFragment() {
@@ -116,6 +121,23 @@ public class BerandaFragment extends Fragment {
                 handler.postDelayed(this, REFRESH_INTERVAL);
             }
         }, REFRESH_INTERVAL);
+
+        txtSelamat = view.findViewById(R.id.txt_selamat);
+
+        // Mendapatkan waktu saat ini
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        // Mengatur salam berdasarkan waktu
+        if (hour >= 3 && hour < 10) {
+            txtSelamat.setText("Selamat Pagi!");
+        } else if (hour >= 10 && hour < 15) {
+            txtSelamat.setText("Selamat Siang!");
+        } else if (hour >= 15 && hour < 19) {
+            txtSelamat.setText("Selamat Sore!");
+        } else {
+            txtSelamat.setText("Selamat Malam!");
+        }
 
         return view;
     }
